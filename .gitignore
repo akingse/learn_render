@@ -361,3 +361,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Assignment2
+*.lnk
+/assignment8/CGL/deps/glfw/docs/html
+/assignment8/CGL/deps/glfw/docs
+/assignment8/CGL/deps/glfw/CMake
