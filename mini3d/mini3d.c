@@ -16,6 +16,7 @@
 //=====================================================================
 #include <stdio.h>
 #include <stdlib.h>
+#define _USE_MATH_DEFINES
 #include <math.h>
 #include <assert.h>
 
@@ -900,8 +901,24 @@ void init_texture(device_t *device) {
 	device_set_texture(device, texture, 256 * 4, 256, 256);
 }
 
+
+#define USING_ORIGIN_MINI_C
+#ifdef USING_ORIGIN_MINI_C
+int main(void)
+{
+	//验证一些函数
+
+	matrix_t m;
+	double theta;
+	theta = 0;
+	matrix_set_rotate(&m, -1, -0.5, 1, theta);
+	theta = 1;
+	matrix_set_rotate(&m, -1, -0.5, 1, theta);
+	theta = M_PI/2;
+	matrix_set_rotate(&m, -1, -0.5, 1, theta);
+}
+#else
 int main_c(void)
-//int main(void)
 {
 	device_t device;
 	int states[] = { RENDER_STATE_TEXTURE, RENDER_STATE_COLOR, RENDER_STATE_WIREFRAME };
@@ -910,8 +927,7 @@ int main_c(void)
 	float alpha = 1;
 	float pos = 3.5;
 
-	TCHAR *title = _T("Mini3d (software render tutorial) - ")
-		_T("Left/Right: rotation, Up/Down: forward/backward, Space: switch state");
+	const TCHAR *title = _T("Mini3d (software render tutorial) - Left/Right: rotation, Up/Down: forward/backward, Space: switch state");
 
 	if (screen_init(800, 600, title)) 
 		return -1;
@@ -948,4 +964,4 @@ int main_c(void)
 	}
 	return 0;
 }
-
+#endif // USING_ORIGIN_MINI_C

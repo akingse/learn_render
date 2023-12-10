@@ -137,6 +137,8 @@
     <ClCompile Include="mini3d.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="calculation.h" />
+    <ClInclude Include="definition.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
