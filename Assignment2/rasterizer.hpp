@@ -4,8 +4,9 @@
 
 #pragma once
 
-#include <eigen3/Eigen/Eigen>
+#include <Eigen/Dense> //$(SolutionDir)..\TPL\eigen-3.4.0
 #include <algorithm>
+#include <map>
 #include "global.hpp"
 #include "Triangle.hpp"
 using namespace Eigen;

@@ -10,7 +10,7 @@
 #include <stdexcept>
 
 
-rst::pos_buf_id rst::rasterizer::load_positions(const std::vector<Eigen::Vector3f> &positions)
+rst::pos_buf_id rst::Rasterizer::load_positions(const std::vector<Eigen::Vector3f> &positions)
 {
     auto id = get_next_id();
     pos_buf.emplace(id, positions);
@@ -18,7 +18,7 @@ rst::pos_buf_id rst::rasterizer::load_positions(const std::vector<Eigen::Vector3
     return {id};
 }
 
-rst::ind_buf_id rst::rasterizer::load_indices(const std::vector<Eigen::Vector3i> &indices)
+rst::ind_buf_id rst::Rasterizer::load_indices(const std::vector<Eigen::Vector3i> &indices)
 {
     auto id = get_next_id();
     ind_buf.emplace(id, indices);
@@ -28,7 +28,7 @@ rst::ind_buf_id rst::rasterizer::load_indices(const std::vector<Eigen::Vector3i>
 
 // Bresenham's line drawing algorithm
 // Code taken from a stack overflow answer: https://stackoverflow.com/a/16405254
-void rst::rasterizer::draw_line(Eigen::Vector3f begin, Eigen::Vector3f end)
+void rst::Rasterizer::draw_line(Eigen::Vector3f begin, Eigen::Vector3f end)
 {
     auto x1 = begin.x();
     auto y1 = begin.y();
@@ -133,7 +133,7 @@ auto to_vec4(const Eigen::Vector3f& v3, float w = 1.0f)
     return Vector4f(v3.x(), v3.y(), v3.z(), w);
 }
 
-void rst::rasterizer::draw(rst::pos_buf_id pos_buffer, rst::ind_buf_id ind_buffer, rst::Primitive type)
+void rst::Rasterizer::draw(rst::pos_buf_id pos_buffer, rst::ind_buf_id ind_buffer, rst::Primitive type)
 {
     if (type != rst::Primitive::Triangle)
     {
@@ -182,29 +182,29 @@ void rst::rasterizer::draw(rst::pos_buf_id pos_buffer, rst::ind_buf_id ind_buffe
     }
 }
 
-void rst::rasterizer::rasterize_wireframe(const Triangle& t)
+void rst::Rasterizer::rasterize_wireframe(const Triangle& t)
 {
     draw_line(t.c(), t.a());
     draw_line(t.c(), t.b());
     draw_line(t.b(), t.a());
 }
 
-void rst::rasterizer::set_model(const Eigen::Matrix4f& m)
+void rst::Rasterizer::set_model(const Eigen::Matrix4f& m)
 {
     model = m;
 }
 
-void rst::rasterizer::set_view(const Eigen::Matrix4f& v)
+void rst::Rasterizer::set_view(const Eigen::Matrix4f& v)
 {
     view = v;
 }
 
-void rst::rasterizer::set_projection(const Eigen::Matrix4f& p)
+void rst::Rasterizer::set_projection(const Eigen::Matrix4f& p)
 {
     projection = p;
 }
 
-void rst::rasterizer::clear(rst::Buffers buff)
+void rst::Rasterizer::clear(rst::Buffers buff)
 {
     if ((buff & rst::Buffers::Color) == rst::Buffers::Color)
     {
@@ -216,18 +216,18 @@ void rst::rasterizer::clear(rst::Buffers buff)
     }
 }
 
-rst::rasterizer::rasterizer(int w, int h) : width(w), height(h)
+rst::Rasterizer::Rasterizer(int w, int h) : width(w), height(h)
 {
     frame_buf.resize(w * h);
     depth_buf.resize(w * h);
 }
 
-int rst::rasterizer::get_index(int x, int y)
+int rst::Rasterizer::get_index(int x, int y)
 {
     return (height-y)*width + x;
 }
 
-void rst::rasterizer::set_pixel(const Eigen::Vector3f& point, const Eigen::Vector3f& color)
+void rst::Rasterizer::set_pixel(const Eigen::Vector3f& point, const Eigen::Vector3f& color)
 {
     //old index: auto ind = point.y() + point.x() * width;
     if (point.x() < 0 || point.x() >= width ||

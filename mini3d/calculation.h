@@ -100,12 +100,12 @@ namespace eigen
 	// Í¸ÊÓ¾ØÕó
 	void matrix_set_perspective(Matrix4d* m, double fovy, double aspect, double zn, double zf)
 	{
+		*m = Matrix4d::Identity();
 		double fax = 1.0f / (double)tan(fovy * 0.5f);
-		//matrix_set_zero(m);
-		//m->m[0][0] = (double)(fax / aspect);
-		//m->m[1][1] = (double)(fax);
-		//m->m[2][2] = zf / (zf - zn);
-		//m->m[3][2] = -zn * zf / (zf - zn);
-		//m->m[2][3] = 1;
+		m->operator[](0) = fax / aspect;
+		m->operator[](5) = fax;
+		m->operator[](10) = zf / (zf - zn);
+		m->operator[](14) = 1 - zn * zf / (zf - zn);
+		m->operator[](11) = 1.0f;
 	}
 }

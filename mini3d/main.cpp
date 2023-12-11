@@ -4,9 +4,19 @@
 #include <windows.h>
 #include <tchar.h>
 #ifdef _MSC_VER
-#pragma comment(lib, "gdi32.lib")
+#pragma comment(lib, "gdi32.lib") //GDI
 #pragma comment(lib, "user32.lib")
 #endif
+
+/*
+项目解析
+https://blog.csdn.net/needmorecode/article/details/82846619
+
+tiny-renderer项目
+https://www.bilibili.com/video/BV1CP411U7D3/?spm_id_from=333.337.search-card.all.click&vd_source=dcb8b113123affd8262c0bfb1bbcbac3
+https://blog.csdn.net/weixin_53459056/article/details/127284975?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522170220691916800211597484%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=170220691916800211597484&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-3-127284975-null-null.142^v96^control&utm_term=tinyrenderer&spm=1018.2226.3001.4187
+
+*/
 
 // using c++ style
 using namespace std;
