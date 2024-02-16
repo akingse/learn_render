@@ -102,10 +102,10 @@ namespace eigen
 	{
 		*m = Matrix4d::Identity();
 		double fax = 1.0f / (double)tan(fovy * 0.5f);
-		m->operator[](0) = fax / aspect;
-		m->operator[](5) = fax;
-		m->operator[](10) = zf / (zf - zn);
-		m->operator[](14) = 1 - zn * zf / (zf - zn);
-		m->operator[](11) = 1.0f;
+		m->operator()(0) = fax / aspect;
+		m->operator()(5) = fax;
+		m->operator()(10) = zf / (zf - zn);
+		m->operator()(14) = 1 - zn * zf / (zf - zn);
+		m->operator()(11) = 1.0f;
 	}
 }
