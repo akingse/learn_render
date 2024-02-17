@@ -16,6 +16,9 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="import">
+      <UniqueIdentifier>{8de33aa3-4c9d-438b-bbd4-54cc64c38493}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -30,6 +33,12 @@
     <ClCompile Include="calculateRasterization.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\learn_cpp\Project_cal\calculatePolyhedron.cpp">
+      <Filter>import</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\learn_cpp\Project_cal\calculateTriangle.cpp">
+      <Filter>import</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -40,6 +49,15 @@
     </ClInclude>
     <ClInclude Include="calculateRasterization.h">
       <Filter>head</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\learn_cpp\Project_cal\calculatePolyhedron.h">
+      <Filter>import</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\learn_cpp\Project_cal\calculateTriangle.h">
+      <Filter>import</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\learn_cpp\Project_cal\psykronixTypeDefine.h">
+      <Filter>import</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

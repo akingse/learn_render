@@ -71,10 +71,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)..\TPL\eigen-3.4.0;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\TPL\eigen-3.4.0;C:\Users\wangk\source\repos\learn_cpp\Project_cal;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)..\TPL\eigen-3.4.0;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\TPL\eigen-3.4.0;C:\Users\wangk\source\repos\learn_cpp\Project_cal;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -133,11 +133,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\learn_cpp\Project_cal\calculatePolyhedron.h" />
+    <ClInclude Include="..\..\learn_cpp\Project_cal\calculateTriangle.h" />
+    <ClInclude Include="..\..\learn_cpp\Project_cal\psykronixTypeDefine.h" />
     <ClInclude Include="calculateRasterization.h" />
     <ClInclude Include="calculateRayTracing.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\learn_cpp\Project_cal\calculatePolyhedron.cpp" />
+    <ClCompile Include="..\..\learn_cpp\Project_cal\calculateTriangle.cpp" />
     <ClCompile Include="calculateRasterization.cpp" />
     <ClCompile Include="calculateRayTracing.cpp" />
     <ClCompile Include="main.cpp">
