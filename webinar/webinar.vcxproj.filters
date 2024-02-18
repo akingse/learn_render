@@ -39,6 +39,9 @@
     <ClCompile Include="..\..\learn_cpp\Project_cal\calculateTriangle.cpp">
       <Filter>import</Filter>
     </ClCompile>
+    <ClCompile Include="test_function.cpp">
+      <Filter>com</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">

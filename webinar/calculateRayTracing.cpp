@@ -30,6 +30,15 @@ std::array<Eigen::Vector3d, 2> rayIntersectionWithSphere(const games::RayEquatio
 	return points;
 }
 
+std::tuple<bool, double> rayIntersectionWithPlane(const games::RayEquation& ray, const games::PlaneEquation& plane)
+{
+	//if (ray.m_direction.dot(plane.m_normal) == 0)
+	//	return -1; //-nan(ind)
+	double t = (plane.m_origin - ray.m_origin).dot(plane.m_normal) / ray.m_direction.dot(plane.m_normal);
+	return { (0 <= t && !isnan(t)),t }; //check 0<=t<oo
+}
+
+//isRayLineCrossTriangleMTA
 std::tuple<bool, double> rayIntersectionWithTriangle(const games::RayEquation& ray, const psykronix::Triangle& triangle)
 {
 	//ignore ray on triangle plane
@@ -37,8 +46,13 @@ std::tuple<bool, double> rayIntersectionWithTriangle(const games::RayEquation& r
 	if (isPerpendi(ray.m_direction, normal))
 		return { false, 0 };
 	//get intersect point of ray and plane 
-
+	std::tuple<bool, double> intersect = rayIntersectionWithPlane(ray, PlaneEquation(triangle[0], normal));
+	if (!std::get<0>(intersect))
+		return { false, 0 };
 	// is point in triangle
+	double t = std::get<1>(intersect);
+	Vector3d point = ray.m_origin + t * ray.m_direction;
+	return { isPointInTriangle(point, triangle), t };
 }
 
 
