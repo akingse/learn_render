@@ -49,3 +49,6 @@ std::array<Eigen::Vector3d, 2> rayIntersectionWithSphere(const games::RayEquatio
 std::tuple<bool, double> rayIntersectionWithTriangle(const games::RayEquation& ray, const psykronix::Triangle& triangle); // is intersect | ray t
 //Ray Intersection With Plane
 std::tuple<bool, double> rayIntersectionWithPlane(const games::RayEquation& ray, const games::PlaneEquation& plane);
+//Accelerating Ray - Surface Intersection
+bool rayIntersectionwithAxisAlignedBoundingBox(const games::RayEquation& ray, const Eigen::AlignedBox3d& box);
+

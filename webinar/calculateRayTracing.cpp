@@ -55,4 +55,77 @@ std::tuple<bool, double> rayIntersectionWithTriangle(const games::RayEquation& r
 	return { isPointInTriangle(point, triangle), t };
 }
 
+//AABB Bounding Volumes, Slab method
+bool rayIntersectionwithAxisAlignedBoundingBox(const games::RayEquation& ray, const Eigen::AlignedBox3d& box)
+{
+	double t_enter, t_exit;
+	if (ray.m_direction[0] == 0 && ray.m_direction[1] == 0) //z-axis
+	{
+		t_enter = (box.min()[2] - ray.m_origin[2]) / ray.m_direction[2];
+		t_exit = (box.max()[2] - ray.m_origin[2]) / ray.m_direction[2];
+		return t_enter < t_exit && 0 <= t_exit;
+	}
+	if (ray.m_direction[1] == 0 && ray.m_direction[2] == 0) //x-axis
+	{
+
+	}
+	if (ray.m_direction[2] == 0 && ray.m_direction[0] == 0) //y-axis
+	{
+
+	}
+
+
+	if (ray.m_direction[0] == 0)
+	{
+		if (ray.m_origin[0] < box.min()[0] || ray.m_origin[0] > box.max()[0])
+			return false;
+		if (ray.m_direction[1] == 0) //z-axis
+		{
+			if (ray.m_origin[1] < box.min()[1] || ray.m_origin[1] > box.max()[1])
+				return false;
+			t_enter = (box.min()[2] - ray.m_origin[2]) / ray.m_direction[2];
+			t_exit = (box.max()[2] - ray.m_origin[2]) / ray.m_direction[2];
+			return t_enter < t_exit && 0 <= t_exit;
+		}
+		if (ray.m_direction[2] == 0) //y-axis
+		{
+			if (ray.m_origin[2] < box.min()[2] || ray.m_origin[2] > box.max()[2])
+				return false;
+			t_enter = (box.min()[1] - ray.m_origin[1]) / ray.m_direction[1];
+			t_exit = (box.max()[1] - ray.m_origin[1]) / ray.m_direction[1];
+			return t_enter < t_exit && 0 <= t_exit;
+		}
+		t_enter = std::max((box.min()[1] - ray.m_origin[1]) / ray.m_direction[1], (box.min()[2] - ray.m_origin[2]) / ray.m_direction[2]);
+		t_exit = std::min((box.max()[1] - ray.m_origin[1]) / ray.m_direction[1], (box.max()[2] - ray.m_origin[2]) / ray.m_direction[2]);
+		return t_enter < t_exit && 0 <= t_exit;
+	}
+	if (ray.m_direction[1] == 0)
+	{
+
+	}
+	if (ray.m_direction[2] == 0) //xy-plane
+	{
+		if (ray.m_origin[2] < box.min()[2] || ray.m_origin[2] > box.max()[2])
+			return false;
+		double tx0 = (box.min()[0] - ray.m_origin[0]) / ray.m_direction[0];
+		double ty0 = (box.min()[1] - ray.m_origin[1]) / ray.m_direction[1];
+		double tx1 = (box.max()[0] - ray.m_origin[0]) / ray.m_direction[0];
+		double ty1 = (box.max()[1] - ray.m_origin[1]) / ray.m_direction[1];
+		t_enter = std::max(std::min(tx0, ty0), std::min(tx1, ty1));
+		t_exit = std::min(std::max(tx0, ty0), std::max(tx1, ty1));
+		//return t_enter < t_exit && 0 <= t_exit;
+	}
+	//if (ray.m_direction[0] != 0 && ray.m_direction[1] != 0 && ray.m_direction[2] != 0)
+	Vector3d t_min = (box.min() - ray.m_origin).cwiseQuotient(ray.m_direction);
+	Vector3d t_max = (box.max() - ray.m_origin).cwiseQuotient(ray.m_direction);
+	Eigen::Vector3d tmin_v = t_min.cwiseMin(t_max);
+	Eigen::Vector3d tmax_v = t_min.cwiseMax(t_max);
+	t_enter = tmin_v.maxCoeff();
+	t_exit = tmax_v.minCoeff();
+
+	t_enter = std::max(std::max((box.min()[0] - ray.m_origin[0]) / ray.m_direction[0], (box.min()[1] - ray.m_origin[1]) / ray.m_direction[1]), (box.min()[2] - ray.m_origin[2]) / ray.m_direction[2]);
+	t_exit = std::min(std::min((box.max()[0] - ray.m_origin[0]) / ray.m_direction[0], (box.max()[1] - ray.m_origin[1]) / ray.m_direction[1]), (box.max()[2] - ray.m_origin[2]) / ray.m_direction[2]);
+	return t_enter < t_exit && 0 <= t_exit; //ray and AABB intersect iff
+}
+
 
