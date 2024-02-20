@@ -4,7 +4,7 @@
 using namespace std;
 using namespace Eigen;
 using namespace games;
-using namespace psykronix;
+using namespace clash;
 
 static void test0()
 {
@@ -57,6 +57,14 @@ bool IntersectRayWithAABB(const Eigen::Vector3d& ray_origin, const Eigen::Vector
 
 static void test1()
 {
+	// 0/0=nan
+	// 1/0=inf
+	double a0 = 0;
+	double dnan = a0 / a0;
+	double dinf = 1.0 / a0;
+	double m1 = std::min(dnan, dinf);
+	double m2 = std::min(dnan, 1.0);
+
 	bool inter;
 	Eigen::AlignedBox3d box(Vector3d(0, 0, 0), Vector3d(10, 10, 10));
 	RayEquation ray1(Vector3d(5, 5, -1), Vector3d(0, 0, 1));

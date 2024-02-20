@@ -41,12 +41,48 @@ namespace games
 	};
 
 }
+
+//inline function
+namespace games
+{
+	//ignore nan and inf
+	inline double std_min(double a, double b)
+	{
+		if (std::isnan(a) || std::isinf(a))
+			return b;
+		if (std::isnan(b) || std::isinf(b))
+			return a;
+		return std::min(a, b);
+	}
+	inline double std_max(double a, double b)
+	{
+		if (std::isnan(a) || std::isinf(a))
+			return b;
+		if (std::isnan(b) || std::isinf(b))
+			return a;
+		return std::max(a, b);
+	}
+	inline double std_min(double a, double b, double c)
+	{
+		//return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
+		//return std::min(std::min(a, b), c);
+		return std_min(std_min(a, b), c);
+	}
+	inline double std_max(double a, double b, double c)
+	{
+		//return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
+		//return std::max(std::max(a, b), c);
+		return std_max(std_max(a, b), c);
+	}
+
+}
+
 //Ray-Surface Intersection
 
 //Ray Intersection With Implicit Surface
 std::array<Eigen::Vector3d, 2> rayIntersectionWithSphere(const games::RayEquation& ray, const games::Sphere& sphere);
 //Ray Intersection With Triangle Mesh
-std::tuple<bool, double> rayIntersectionWithTriangle(const games::RayEquation& ray, const psykronix::Triangle& triangle); // is intersect | ray t
+std::tuple<bool, double> rayIntersectionWithTriangle(const games::RayEquation& ray, const clash::Triangle& triangle); // is intersect | ray t
 //Ray Intersection With Plane
 std::tuple<bool, double> rayIntersectionWithPlane(const games::RayEquation& ray, const games::PlaneEquation& plane);
 //Accelerating Ray - Surface Intersection
