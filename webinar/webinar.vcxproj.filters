@@ -42,6 +42,9 @@
     <ClCompile Include="test_function.cpp">
       <Filter>com</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\learn_cpp\Project_cal\calculateVectorMatrix.cpp">
+      <Filter>import</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -59,7 +62,10 @@
     <ClInclude Include="..\..\learn_cpp\Project_cal\calculateTriangle.h">
       <Filter>import</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\learn_cpp\Project_cal\psykronixTypeDefine.h">
+    <ClInclude Include="..\..\learn_cpp\Project_cal\calculateVectorMatrix.h">
+      <Filter>import</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\learn_cpp\Project_cal\clashTypeDefine.h">
       <Filter>import</Filter>
     </ClInclude>
   </ItemGroup>

@@ -135,7 +135,8 @@
   <ItemGroup>
     <ClInclude Include="..\..\learn_cpp\Project_cal\calculatePolyhedron.h" />
     <ClInclude Include="..\..\learn_cpp\Project_cal\calculateTriangle.h" />
-    <ClInclude Include="..\..\learn_cpp\Project_cal\psykronixTypeDefine.h" />
+    <ClInclude Include="..\..\learn_cpp\Project_cal\calculateVectorMatrix.h" />
+    <ClInclude Include="..\..\learn_cpp\Project_cal\clashTypeDefine.h" />
     <ClInclude Include="calculateRasterization.h" />
     <ClInclude Include="calculateRayTracing.h" />
     <ClInclude Include="pch.h" />
@@ -143,6 +144,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\learn_cpp\Project_cal\calculatePolyhedron.cpp" />
     <ClCompile Include="..\..\learn_cpp\Project_cal\calculateTriangle.cpp" />
+    <ClCompile Include="..\..\learn_cpp\Project_cal\calculateVectorMatrix.cpp" />
     <ClCompile Include="calculateRasterization.cpp" />
     <ClCompile Include="calculateRayTracing.cpp" />
     <ClCompile Include="main.cpp">
