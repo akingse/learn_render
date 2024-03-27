@@ -112,7 +112,9 @@ float shadeIntegration(const Vector3f& p, const Vector3f& n, const ModelMesh& li
 	float Lo = 0.0f;
 	int N = 100;
 	Vector3f wi = n.cross(Vector3f::UnitX());
-	for (int i = 0; i < N; ++i)
+	//for (int i = 0; i < N; ++i)
+	int i = rand() % N;
+	N = 1;
 	{
 		//wi = rotate(p, n, i / N * 2 * M_PI) * wi;
 		//if ray hit the light
