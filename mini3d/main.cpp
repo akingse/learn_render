@@ -418,7 +418,7 @@ void draw_box(Device* device, double theta)
 {
 	Matrix4d m;
 	//matrix_set_rotate(&m, -1, -0.5, 1, theta);
-	device->transform.world = m;
+	device->transform.model = m;
 	transform_update(&device->transform);
 	draw_plane(device, 0, 1, 2, 3);
 	draw_plane(device, 7, 6, 5, 4);

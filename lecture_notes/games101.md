@@ -17,15 +17,12 @@ Fundamental Intellectual Challenges
 
 ### Technical Challenges
 
-(透视)投影、曲线、曲面的数学
-照明和遮阳物理学
-用3D表示/操作形状
-动画/仿真
-3D绘图软件编程和硬件
+- (透视)投影、曲线、曲面的数学
 
-computer graphics is awesome
-
-Course Topics 4
+- 照明和遮阳物理学
+- 用3D表示/操作形状
+- 动画/仿真
+- 3D绘图软件编程和硬件
 
 ### Rasterization光栅化
 

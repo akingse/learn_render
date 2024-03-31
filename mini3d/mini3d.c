@@ -12,14 +12,13 @@
 //   2008.3.15  skywind  fixed a trapezoid issue
 //   2015.8.09  skywind  rewrite with more comment
 //   2015.8.12  skywind  adjust interfaces for clearity 
-// 
+//   韦易笑
 //=====================================================================
 #include <stdio.h>
 #include <stdlib.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <assert.h>
-
 #include <windows.h>
 #include <tchar.h>
 
@@ -851,6 +850,7 @@ void screen_update(void) {
 //=====================================================================
 // 主程序
 //=====================================================================
+
 vertex_t mesh[8] = {
 	{ { -1, -1,  1, 1 }, { 0, 0 }, { 1.0f, 0.2f, 0.2f }, 1 },
 	{ {  1, -1,  1, 1 }, { 0, 1 }, { 0.2f, 1.0f, 0.2f }, 1 },

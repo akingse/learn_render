@@ -6,15 +6,15 @@ namespace mini3d
 	// class
 	struct Transform // matrix transform of eigen
 	{
-		Matrix4d world;         // 世界坐标变换 model
+		Matrix4d model;         // 世界坐标变换 model/world
 		Matrix4d view;          // 摄影机坐标变换
 		Matrix4d projection;    // 投影变换
-		Matrix4d transform;     // transform = world * view * projection
+		Matrix4d transform;     // transform = model * view * projection
 		double w, h;             // 屏幕大小
 	};
 	struct color_t
 	{
-		double r, g, b;
+		double r, g, b; //a
 	};
 	struct texcoord_t
 	{
@@ -43,7 +43,8 @@ namespace mini3d
 		int x, y, w;
 	};
 
-	struct Device {
+	struct Device //device_t
+	{
 		Transform transform;      // 坐标变换器
 		int width;                  // 窗口宽度
 		int height;                 // 窗口高度
@@ -68,14 +69,14 @@ namespace mini3d
 	// 矩阵更新，计算 transform = world * view * projection
 	void transform_update(Transform* ts)
 	{
-		ts->transform = ts->world * ts->view * ts->transform;
+		ts->transform = ts->model * ts->view * ts->transform;
 	}
 
 	// 初始化，设置屏幕长宽
 	void transform_init(Transform* ts, int width, int height)
 	{
 		double aspect = (double)width / ((double)height);
-		ts->world = Matrix4d::Identity();
+		ts->model = Matrix4d::Identity();
 		ts->view = Matrix4d::Identity();
 
 		matrix_set_perspective(&ts->projection, 3.1415926f * 0.5f, aspect, 1.0f, 500.0f);

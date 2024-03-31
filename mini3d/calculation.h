@@ -2,6 +2,7 @@
 #include "pch.h"
 using namespace std;
 using namespace Eigen;
+// rendering using float
 
 namespace eigen
 {
@@ -25,7 +26,7 @@ namespace eigen
 			0, 0, 0, 1;
 		return T;
 	}
-	Eigen::Matrix4d rotate(const Eigen::Vector3d& axis = { 0, 0, 1 }, double theta = 0.0)
+	inline Eigen::Matrix4d rotate(const Eigen::Vector3d& axis = { 0, 0, 1 }, double theta = 0.0)
 	{
 		Quaterniond q = Quaterniond(AngleAxisd(theta, axis.normalized()));
 		Matrix3d R = q.toRotationMatrix();
@@ -108,4 +109,6 @@ namespace eigen
 		m->operator()(14) = 1 - zn * zf / (zf - zn);
 		m->operator()(11) = 1.0f;
 	}
+
+
 }

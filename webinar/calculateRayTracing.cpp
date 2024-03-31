@@ -140,3 +140,8 @@ float shadeIntegration(const Vector3f& p, const Vector3f& n, const ModelMesh& li
 	return Lo / N;
 }
 
+//Whitted-Style π‚◊∑»Î√≈
+//https://zhuanlan.zhihu.com/p/144403005
+//https://raytracing.github.io/books/RayTracingInOneWeekend.html
+
+//
