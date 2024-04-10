@@ -71,11 +71,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)..\TPL\eigen-3.4.0;$(SolutionDir)..\TPL\vcpkg\packages\opencv4_x64-windows\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\TPL\eigen-3.4.0;$(SolutionDir)..\TPL\vcpkg\packages\opencv4_x64-windows\include;$(SolutionDir)include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)..\TPL\vcpkg\packages\opencv4_x64-windows\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)..\TPL\eigen-3.4.0;$(SolutionDir)..\TPL\vcpkg\packages\opencv4_x64-windows\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\TPL\eigen-3.4.0;$(SolutionDir)..\TPL\vcpkg\packages\opencv4_x64-windows\include;$(SolutionDir)include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)..\TPL\vcpkg\packages\opencv4_x64-windows\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -135,11 +135,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\include\calculateTransform.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="rasterizer.cpp" />
     <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\calculateTransform.h" />
     <ClInclude Include="rasterizer.hpp" />
     <ClInclude Include="Triangle.hpp" />
   </ItemGroup>

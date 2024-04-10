@@ -9,10 +9,9 @@
 #include <Eigen/Dense> 
 using namespace Eigen;
 
-//rasterizer 光栅(Raster)由像素构成的一个矩形网格。
 namespace rst 
 {
-	enum class Buffers
+	enum class Buffers:int
 	{
 		Color = 1,
 		Depth = 2
@@ -50,20 +49,23 @@ namespace rst
 		int ind_id = 0;
 	};
 
+	//rasterizer 光栅(Raster)由像素构成的一个矩形网格。
 	class Rasterizer
 	{
 	public:
 		Rasterizer(int w, int h);
+		void clear(Buffers buff);
+
 		pos_buf_id load_positions(const std::vector<Eigen::Vector3f>& positions);
 		ind_buf_id load_indices(const std::vector<Eigen::Vector3i>& indices);
 
-		void set_model(const Eigen::Matrix4f& m);
-		void set_view(const Eigen::Matrix4f& v);
-		void set_projection(const Eigen::Matrix4f& p);
-		void set_pixel(const Eigen::Vector3f& point, const Eigen::Vector3f& color);
-		void clear(Buffers buff);
+		void set_model(const Eigen::Matrix4f& m) {	model = m; }
+		void set_view(const Eigen::Matrix4f& v) { view = v; }
+		void set_projection(const Eigen::Matrix4f& p) { projection = p; }
+
+		void set_pixel(const Eigen::Vector3f& point, const Eigen::Vector3f& color);//frame_buf
 		void draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, Primitive type);
-		std::vector<Eigen::Vector3f>& frame_buffer() { return frame_buf; }
+		std::vector<Eigen::Vector3f>& frame_buffer() { return frame_buf; } //
 
 	private:
 		void draw_line(Eigen::Vector3f begin, Eigen::Vector3f end);
@@ -75,11 +77,17 @@ namespace rst
 		Eigen::Matrix4f projection;
 		std::map<int, std::vector<Eigen::Vector3f>> pos_buf;
 		std::map<int, std::vector<Eigen::Vector3i>> ind_buf;
+
+		// one dimension vector, size=width*height
+		int width, height;
 		std::vector<Eigen::Vector3f> frame_buf;
 		std::vector<float> depth_buf;
-		int get_index(int x, int y);
 
-		int width, height;
+		int get_index(int x, int y)
+		{
+			return (height - y) * width + x;
+		}
+
 		int next_id = 0;
 		int get_next_id() 
 		{
