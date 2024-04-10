@@ -2,6 +2,51 @@
 #include <Eigen/Dense> 
 namespace eigen//eigen
 {
+    inline Eigen::Vector4f to_vec4(const Eigen::Vector3f& v3, float w = 1.0f)
+    {
+        return Eigen::Vector4f(v3[0], v3[0], v3[0], w);
+    }
+
+    inline Eigen::Matrix4f translate(double x, double y, double z = 0.0f)
+    {
+        Eigen::Matrix4f T;
+        T <<
+            1, 0, 0, x,
+            0, 1, 0, y,
+            0, 0, 1, z,
+            0, 0, 0, 1;
+        return T;
+    }
+
+    inline Eigen::Matrix4f translate(const Eigen::Vector3f& vec)
+    {
+        Eigen::Matrix4f T;
+        T <<
+            1, 0, 0, vec[0],
+            0, 1, 0, vec[1],
+            0, 0, 1, vec[2],
+            0, 0, 0, 1;
+        return T;
+    }
+
+    inline Eigen::Matrix4f rotate(const Eigen::Vector3f& axis, float theta = 0.0f)
+    {
+        Eigen::Quaternionf q = Eigen::Quaternionf(Eigen::AngleAxisf(theta, axis));
+        Eigen::Matrix3f R = q.toRotationMatrix();
+        Eigen::Matrix4f mat4d = Eigen::Matrix4f::Identity();
+        mat4d.block<3, 3>(0, 0) = R;
+        return mat4d;
+    }
+
+    inline Eigen::Matrix4f rotate(const Eigen::Vector3f& position, const Eigen::Vector3f& axis, float theta = 0.0f)
+    {
+        Eigen::Quaternionf q = Eigen::Quaternionf(Eigen::AngleAxisf(theta, axis));
+        Eigen::Matrix3f R = q.toRotationMatrix();
+        Eigen::Matrix4f mat4d = Eigen::Matrix4f::Identity();
+        mat4d.block<3, 3>(0, 0) = R;
+        return translate(-position) * mat4d * translate(position);
+    }
+
     inline Eigen::Matrix4f get_view_matrix(const Eigen::Vector3f& eye_pos)
     {
         Eigen::Matrix4f view = Eigen::Matrix4f::Identity();
@@ -60,4 +105,15 @@ namespace eigen//eigen
             0, 0, 0, 1;
         return Mscale * Mscale;
     }
+
+    inline std::array<Eigen::Vector3f, 3> operator*(const Eigen::Matrix4f& mat, const std::array<Eigen::Vector3f, 3>& trigon)
+    {
+        std::array<Eigen::Vector3f, 3> triangle = {
+            (mat * trigon[0].homogeneous()).hnormalized(),
+            (mat * trigon[1].homogeneous()).hnormalized(),
+            (mat * trigon[2].homogeneous()).hnormalized() };
+        return triangle;
+    }
+
+
 }
