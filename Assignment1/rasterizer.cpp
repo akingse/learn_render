@@ -29,7 +29,7 @@ void rst::Rasterizer::set_pixel_color(const Eigen::Vector3f& point, const Eigen:
 		point.y() < 0 || point.y() >= height)
 		return;
 	int ind = (height - point.y()) * width + point.x();
-	if (frame_buf.size() <= ind)
+	if (ind < 0 || frame_buf.size() <= ind)
 		return;
 	frame_buf[ind] = color;
 }
@@ -52,7 +52,6 @@ void rst::Rasterizer::draw_line(Eigen::Vector3f begin, Eigen::Vector3f end)
 	py = 2 * dx1 - dy1;
 	if (dy1 <= dx1)
 	{
-		if (dx >= 0)
 		if (dx >= 0)
 		{
 			x = x1;
@@ -118,24 +117,23 @@ void rst::Rasterizer::draw_line(Eigen::Vector3f begin, Eigen::Vector3f end)
 					x = x - 1;
 				py = py + 2 * (dx1 - dy1);
 			}
-			//            delay(0);
 			Eigen::Vector3f point = Eigen::Vector3f(x, y, 1.0f);
 			set_pixel_color(point, line_color);
 		}
 	}
 }
 
-void rst::Rasterizer::draw(rst::pos_buf_id pos_buffer, rst::ind_buf_id ind_buffer)
+void rst::Rasterizer::draw()
 {
-	const vector<Eigen::Vector3f>& buf = pos_buf[pos_buffer];
-	const vector<Eigen::Vector3i>& ind = ind_buf[ind_buffer];
+	const vector<Eigen::Vector3f>& vbo = pos_buf[0];
+	const vector<Eigen::Vector3i>& ibo = ind_buf[0];
 	float f1 = (100 - 0.1) / 2.0;
 	float f2 = (100 + 0.1) / 2.0;
 
 	Eigen::Matrix4f mvp = projection * view * model;
-	for (const auto& i : ind)
+	for (const auto& face : ibo)
 	{
-		array<Eigen::Vector3f, 3> trigon = mvp * array<Eigen::Vector3f, 3>{ buf[i[0]] ,buf[i[1]] ,buf[i[2]] };
+		array<Eigen::Vector3f, 3> trigon = mvp * array<Eigen::Vector3f, 3>{ vbo[face[0]], vbo[face[1]], vbo[face[2]] };
 		for (auto& vert : trigon)
 		{
 			vert.x() = 0.5 * width * (vert.x() + 1.0);
@@ -145,8 +143,6 @@ void rst::Rasterizer::draw(rst::pos_buf_id pos_buffer, rst::ind_buf_id ind_buffe
 		Triangle t;
 		for (int i = 0; i < 3; ++i)
 		{
-			t.setVertex(i, trigon[i]);
-			t.setVertex(i, trigon[i]);
 			t.setVertex(i, trigon[i]);
 		}
 		t.setColor(0, 255.0, 0.0, 0.0);

@@ -47,6 +47,16 @@ namespace eigen//eigen
         return translate(-position) * mat4d * translate(position);
     }
 
+    /*
+    ^
+    |
+    |----->
+    
+    
+    
+    
+    */
+
     inline Eigen::Matrix4f get_view_matrix(const Eigen::Vector3f& eye_pos)
     {
         Eigen::Matrix4f view = Eigen::Matrix4f::Identity();
@@ -62,20 +72,10 @@ namespace eigen//eigen
 
     inline Eigen::Matrix4f get_model_matrix(const Eigen::Vector3f& axis, float theta = 0) //using rad
     {
-        Eigen::Matrix4f model = Eigen::Matrix4f::Identity();
-        // Create the model matrix for rotating the triangle around the Z axis.
-        model << 
-            cos(theta), -sin(theta), 0, 0,
-            sin(theta), cos(theta), 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 1;
-        // any axis rot
-        Eigen::Quaternionf q = Eigen::Quaternionf(Eigen::AngleAxisf(theta, axis.normalized()));
-        Eigen::Matrix3f R = q.toRotationMatrix();
-        model.block<3, 3>(0, 0) = R;
-        return model;
+		return rotate(Eigen::Vector3f::Zero(), axis, theta);
     }
 
+    //perspective projection
     inline Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio, float zNear, float zFar)
     {
         Eigen::Matrix4f projection = Eigen::Matrix4f::Identity();
@@ -89,22 +89,22 @@ namespace eigen//eigen
         return projection;
     }
 
-    //orthogonal
-    inline Eigen::Matrix4f get_orthographic_matrix(float l, float b, float n, float r, float t, float f) //left bottom near right top far
-    {
-        Eigen::Matrix4f Mscale, Mtranslate;
-        Mscale << 
-            2.0f / (r - l), 0, 0, 0,
-            0, 2.0f / (t - b), 0, 0,
-            0, 0, 2.0f / (n - f), 0,
-            0, 0, 0, 1;
-        Mtranslate << 
-            1, 0, 0, -0.5f * (r - l),
-            0, 1, 0, -0.5f * (t - b),
-            0, 0, 1, -0.5f * (n - f),
-            0, 0, 0, 1;
-        return Mscale * Mscale;
-    }
+    ////orthogonal
+    //inline Eigen::Matrix4f get_orthographic_matrix(float l, float b, float n, float r, float t, float f) //left bottom near right top far
+    //{
+    //    Eigen::Matrix4f Mscale, Mtranslate;
+    //    Mscale << 
+    //        2.0f / (r - l), 0, 0, 0,
+    //        0, 2.0f / (t - b), 0, 0,
+    //        0, 0, 2.0f / (n - f), 0,
+    //        0, 0, 0, 1;
+    //    Mtranslate << 
+    //        1, 0, 0, -0.5f * (r - l),
+    //        0, 1, 0, -0.5f * (t - b),
+    //        0, 0, 1, -0.5f * (n - f),
+    //        0, 0, 0, 1;
+    //    return Mscale * Mscale;
+    //}
 
     inline std::array<Eigen::Vector3f, 3> operator*(const Eigen::Matrix4f& mat, const std::array<Eigen::Vector3f, 3>& trigon)
     {
