@@ -11,28 +11,28 @@ using namespace Eigen;
 
 namespace rst //rasterizer
 {
-	enum class Buffers:int
-	{
-		Color = 1,
-		Depth = 2
-	};
+	//enum class Buffers:int
+	//{
+	//	Color = 1,
+	//	Depth = 2
+	//};
 
-	inline Buffers operator|(Buffers a, Buffers b)
-	{
-		return Buffers((int)a | (int)b);
-	}
+	//inline Buffers operator|(Buffers a, Buffers b)
+	//{
+	//	return Buffers((int)a | (int)b);
+	//}
 
-	inline Buffers operator&(Buffers a, Buffers b)
-	{
-		return Buffers((int)a & (int)b);
-	}
+	//inline Buffers operator&(Buffers a, Buffers b)
+	//{
+	//	return Buffers((int)a & (int)b);
+	//}
 
-	enum class Primitive
-	{
-		Line,
-		Triangle,
-		Cube,
-	};
+	//enum class Primitive
+	//{
+	//	Line,
+	//	Triangle,
+	//	Cube,
+	//};
 
 	/*
 	 * For the curious : The draw function takes two buffer id's as its arguments.
@@ -48,15 +48,15 @@ namespace rst //rasterizer
 	//	int ind_id = 0;
 	//};
 
-	typedef int pos_buf_id;
-	typedef int ind_buf_id;
+	typedef int pos_buf_id; //vbo_index
+	typedef int ind_buf_id; //ibo_index
 
 	//rasterizer 光栅(Raster)由像素构成的一个矩形网格。
 	class Rasterizer
 	{
 	public:
 		Rasterizer(int w, int h);
-		void clear(Buffers buff);
+		void clear();
 
 		pos_buf_id load_positions(const std::vector<Eigen::Vector3f>& positions)
 		{
@@ -76,7 +76,7 @@ namespace rst //rasterizer
 		void set_projection(const Eigen::Matrix4f& p) { projection = p; }
 
 		void set_pixel_color(const Eigen::Vector3f& point, const Eigen::Vector3f& color);//frame_buf
-		void draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, Primitive type);
+		void draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer);
 		std::vector<Eigen::Vector3f>& frame_buffer() { return frame_buf; } //
 
 	private:
@@ -87,8 +87,8 @@ namespace rst //rasterizer
 		Eigen::Matrix4f model;
 		Eigen::Matrix4f view;
 		Eigen::Matrix4f projection;
-		std::map<int, std::vector<Eigen::Vector3f>> pos_buf;
-		std::map<int, std::vector<Eigen::Vector3i>> ind_buf;
+		std::map<int, std::vector<Eigen::Vector3f>> pos_buf; //vbo
+		std::map<int, std::vector<Eigen::Vector3i>> ind_buf; //ibo
 
 		// one dimension vector, size=width*height
 		int width, height;

@@ -16,31 +16,11 @@ rst::Rasterizer::Rasterizer(int w, int h) : width(w), height(h)
 	depth_buf.resize(w * h);
 }
 
-void rst::Rasterizer::clear(rst::Buffers buff)
+void rst::Rasterizer::clear()
 {
-	if ((buff & rst::Buffers::Color) == rst::Buffers::Color)
-	{
-		std::fill(frame_buf.begin(), frame_buf.end(), Eigen::Vector3f{ 0, 0, 0 });
-	}
-	if ((buff & rst::Buffers::Depth) == rst::Buffers::Depth)
-	{
-		std::fill(depth_buf.begin(), depth_buf.end(), std::numeric_limits<float>::infinity());
-	}
+	std::fill(frame_buf.begin(), frame_buf.end(), Eigen::Vector3f{ 0, 0, 0 });
+	std::fill(depth_buf.begin(), depth_buf.end(), std::numeric_limits<float>::infinity()); //inf
 }
-
-//rst::pos_buf_id rst::Rasterizer::load_positions(const std::vector<Eigen::Vector3f>& positions)
-//{
-//	int id = get_next_id();
-//	pos_buf.emplace(id, positions);
-//	return { id };
-//}
-//
-//rst::ind_buf_id rst::Rasterizer::load_indices(const std::vector<Eigen::Vector3i>& indices)
-//{
-//	int id = get_next_id();
-//	ind_buf.emplace(id, indices);
-//	return { id };
-//}
 
 void rst::Rasterizer::set_pixel_color(const Eigen::Vector3f& point, const Eigen::Vector3f& color)
 {
@@ -58,10 +38,10 @@ void rst::Rasterizer::set_pixel_color(const Eigen::Vector3f& point, const Eigen:
 // Code taken from a stack overflow answer: https://stackoverflow.com/a/16405254
 void rst::Rasterizer::draw_line(Eigen::Vector3f begin, Eigen::Vector3f end)
 {
-	auto x1 = begin.x();
-	auto y1 = begin.y();
-	auto x2 = end.x();
-	auto y2 = end.y();
+	float x1 = begin.x();
+	float y1 = begin.y();
+	float x2 = end.x();
+	float y2 = end.y();
 	Eigen::Vector3f line_color = { 255, 255, 255 };
 	int x, y, dx, dy, dx1, dy1, px, py, xe, ye, i;
 	dx = x2 - x1;
@@ -72,6 +52,7 @@ void rst::Rasterizer::draw_line(Eigen::Vector3f begin, Eigen::Vector3f end)
 	py = 2 * dx1 - dy1;
 	if (dy1 <= dx1)
 	{
+		if (dx >= 0)
 		if (dx >= 0)
 		{
 			x = x1;
@@ -144,39 +125,29 @@ void rst::Rasterizer::draw_line(Eigen::Vector3f begin, Eigen::Vector3f end)
 	}
 }
 
-void rst::Rasterizer::draw(rst::pos_buf_id pos_buffer, rst::ind_buf_id ind_buffer, rst::Primitive type)
+void rst::Rasterizer::draw(rst::pos_buf_id pos_buffer, rst::ind_buf_id ind_buffer)
 {
-	if (type != rst::Primitive::Triangle)
-	{
-		throw std::runtime_error("Drawing primitives other than triangle is not implemented yet!");
-	}
 	const vector<Eigen::Vector3f>& buf = pos_buf[pos_buffer];
 	const vector<Eigen::Vector3i>& ind = ind_buf[ind_buffer];
-
 	float f1 = (100 - 0.1) / 2.0;
 	float f2 = (100 + 0.1) / 2.0;
 
 	Eigen::Matrix4f mvp = projection * view * model;
 	for (const auto& i : ind)
 	{
-		Triangle t;
-		//Eigen::Vector4f v[3] = {
-		//		mvp * to_vec4(buf[i[0]], 1.0f),
-		//		mvp * to_vec4(buf[i[1]], 1.0f),
-		//		mvp * to_vec4(buf[i[2]], 1.0f) };
-		//for (auto& vec : v) 
-		array<Eigen::Vector3f, 3> v = mvp * array<Eigen::Vector3f, 3>{ buf[i[0]] ,buf[i[1]] ,buf[i[2]] };
-		for (auto& vert : v)
+		array<Eigen::Vector3f, 3> trigon = mvp * array<Eigen::Vector3f, 3>{ buf[i[0]] ,buf[i[1]] ,buf[i[2]] };
+		for (auto& vert : trigon)
 		{
 			vert.x() = 0.5 * width * (vert.x() + 1.0);
 			vert.y() = 0.5 * height * (vert.y() + 1.0);
 			vert.z() = vert.z() * f1 + f2;
 		}
+		Triangle t;
 		for (int i = 0; i < 3; ++i)
 		{
-			t.setVertex(i, v[i].head<3>());
-			t.setVertex(i, v[i].head<3>());
-			t.setVertex(i, v[i].head<3>());
+			t.setVertex(i, trigon[i]);
+			t.setVertex(i, trigon[i]);
+			t.setVertex(i, trigon[i]);
 		}
 		t.setColor(0, 255.0, 0.0, 0.0);
 		t.setColor(1, 0.0, 255.0, 0.0);
