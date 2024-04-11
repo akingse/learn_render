@@ -5,7 +5,7 @@
 #ifndef RASTERIZER_TEXTURE_H
 #define RASTERIZER_TEXTURE_H
 #include "global.hpp"
-#include <eigen3/Eigen/Eigen>
+#include <Eigen/Dense> //$(SolutionDir)..\TPL\eigen-3.4.0
 #include <opencv2/opencv.hpp>
 class Texture{
 private:

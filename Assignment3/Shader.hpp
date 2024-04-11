@@ -4,7 +4,7 @@
 
 #ifndef RASTERIZER_SHADER_H
 #define RASTERIZER_SHADER_H
-#include <eigen3/Eigen/Eigen>
+#include <Eigen/Dense> //$(SolutionDir)..\TPL\eigen-3.4.0
 #include "Texture.hpp"
 
 

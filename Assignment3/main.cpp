@@ -51,6 +51,7 @@ Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio, float z
 {
     // TODO: Use the same projection matrix from the previous assignments
 
+    return {};
 }
 
 Eigen::Vector3f vertex_shader(const vertex_shader_payload& payload)
