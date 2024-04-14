@@ -28,8 +28,8 @@ int main(/*int argc, const char** argv*/)
     while (key != 27)  //ESC
     {
         r.clear();
-        r.set_model(get_model_matrix(Vector3f(1,1,1), angle));
-        r.set_view(get_view_matrix(eye_pos));
+		r.set_model(get_model_matrix(Vector3f(0, 0, 0), Vector3f(0, 0, 1), angle));
+		r.set_view(get_viewing_matrix(eye_pos, -Vector3f(0, 0, 1), Vector3f(0, 1, 0)));
         r.set_projection(get_projection_matrix(45, 1, 0.1, 50));
         r.draw();//Primitive::Triangle
 

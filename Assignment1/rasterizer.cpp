@@ -154,9 +154,9 @@ void rst::Rasterizer::draw()
 
 void rst::Rasterizer::rasterize_wireframe(const Triangle& t)
 {
+	draw_line(t.vertex[0], t.vertex[1]);
+	draw_line(t.vertex[1], t.vertex[2]);
 	draw_line(t.vertex[2], t.vertex[0]);
-	draw_line(t.vertex[2], t.vertex[1]);
-	draw_line(t.vertex[1], t.vertex[0]);
 }
 
 

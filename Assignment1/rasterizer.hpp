@@ -11,44 +11,6 @@ using namespace Eigen;
 
 namespace rst //rasterizer
 {
-	//enum class Buffers:int
-	//{
-	//	Color = 1,
-	//	Depth = 2
-	//};
-
-	//inline Buffers operator|(Buffers a, Buffers b)
-	//{
-	//	return Buffers((int)a | (int)b);
-	//}
-
-	//inline Buffers operator&(Buffers a, Buffers b)
-	//{
-	//	return Buffers((int)a & (int)b);
-	//}
-
-	//enum class Primitive
-	//{
-	//	Line,
-	//	Triangle,
-	//	Cube,
-	//};
-
-	/*
-	 * For the curious : The draw function takes two buffer id's as its arguments.
-	 * These two structs make sure that if you mix up with their orders, the
-	 * compiler won't compile it. Aka : Type safety
-	 * */
-	//struct pos_buf_id //position
-	//{
-	//	int pos_id = 0;
-	//};
-	//struct ind_buf_id //index
-	//{
-	//	int ind_id = 0;
-	//};
-	//typedef int pos_buf_id; //vbo_index
-	//typedef int ind_buf_id; //ibo_index
 	struct Mesh
 	{
 		Mesh() = default;
@@ -95,15 +57,5 @@ namespace rst //rasterizer
 		std::vector<Vector3f> frame_buf;
 		std::vector<float> depth_buf;
 
-		//int get_index(int x, int y)
-		//{
-		//	return (height - y) * width + x;
-		//}
-
-		int next_id = 0;
-		int get_next_id() 
-		{
-			return next_id++;
-		}
 	};
 } // namespace rst
