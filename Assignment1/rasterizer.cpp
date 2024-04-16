@@ -133,11 +133,12 @@ void rst::Rasterizer::draw()
 	Eigen::Matrix4f mvp = projection * view * model;
 	for (const auto& face : ibo)
 	{
-		array<Eigen::Vector3f, 3> trigon = mvp * array<Eigen::Vector3f, 3>{ vbo[face[0]], vbo[face[1]], vbo[face[2]] };
+		array<Eigen::Vector3f, 3> trigon = array<Eigen::Vector3f, 3>{ vbo[face[0]], vbo[face[1]], vbo[face[2]] };
+		trigon = mvp * trigon;
 		for (auto& vert : trigon)
 		{
-			vert.x() = 0.5 * width * (vert.x() + 1.0);
-			vert.y() = 0.5 * height * (vert.y() + 1.0);
+			vert.x() = 0.5 * width * (vert.x() + 1.0f); //move canonical cube to origin
+			vert.y() = 0.5 * height * (vert.y() + 1.0f);
 			vert.z() = vert.z() * f1 + f2;
 		}
 		Triangle t;
