@@ -51,9 +51,9 @@ Mesh getUnitCube()
 //模拟一个基于 CPU 的光栅化渲染器的简化版本
 int main(/*int argc, const char** argv*/)
 {
-    float angle = 0;
-    int sz_width = 500;
+    int sz_width = 700;
     int sz_height = 500;
+    float aspect_ratio = (float)sz_width / sz_height;
     rst::Rasterizer r(sz_width, sz_height);
     //from up direction 
     Eigen::Vector3f eye_pos = {0, 0, 10};
@@ -64,27 +64,26 @@ int main(/*int argc, const char** argv*/)
     //Mesh mesh(pos, ind);
     Mesh mesh = getUnitCube();
     //mesh.m_mat = scale(30, 20);
-    Eigen::AlignedBox3f box = mesh.getBox();
+    //Eigen::AlignedBox3f box = mesh.getBox();
     r.load_mesh(mesh);
 
     int key = 0;
+    float angle = 0;
     while (key != 27)  //ESC
     {
         r.clear();
 		r.set_model(get_model_matrix(Vector3f(0, 0, 0), Vector3f(1, 1,0), angle));
 		r.set_view(get_viewing_matrix(eye_pos, Vector3f(0, 0, -1), Vector3f(0, 1, 0)));
-        //r.set_projection(get_projection_matrix(45*M_PI/180, 1, 0.1, 50));
-        //r.set_projection(get_projection_matrix(box, 3, 50));
-        r.set_projection(get_orthographic_projection_matrix(box));
+		r.set_projection(get_projection_matrix(45 * M_PI / 180, aspect_ratio, 0.1, 50));
+        //r.set_projection(get_projection_matrix(-1, 1, -1, 1, 1, 50));
         r.draw();//Primitive::Triangle
         vector3List debug_show = vector3List(r.frame_buffer());
-        //opencv grammer
-        cv::Mat image(sz_width, sz_height, CV_32FC3, r.frame_buffer().data());
+        //opencv interface
+		cv::Mat image(sz_height, sz_width, CV_32FC3, r.frame_buffer().data());
         image.convertTo(image, CV_8UC3, 1.0f);
         cv::imshow("image", image);
         key = cv::waitKey(10);
         //cout << key << endl;
-
         if (key == 'A') //left
 			angle += 10 * M_PI / 180;
         else if (key == 'D') //right
