@@ -133,12 +133,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="global.hpp" />
     <ClInclude Include="rasterizer.hpp" />
     <ClInclude Include="Triangle.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="rasterizer.cpp" />
     <ClCompile Include="Triangle.cpp" />
   </ItemGroup>

@@ -140,7 +140,29 @@ namespace eigen//eigen
 		return scale * trans * perspective;
     }
 
+    inline bool insideTriangle(int x, int y, const std::array<Eigen::Vector3f, 3>& _v)
+    {
+        // check if the point (x, y) is inside the triangle represented by _v[0], _v[1], _v[2]
+        Eigen::Vector3f p0p1(_v[0].x() - _v[1].x(), _v[0].y() - _v[1].y(), 1.0f);
+        Eigen::Vector3f p1p2(_v[1].x() - _v[2].x(), _v[1].y() - _v[2].y(), 1.0f);
+        Eigen::Vector3f p2p0(_v[2].x() - _v[0].x(), _v[2].y() - _v[0].y(), 1.0f);
+        Eigen::Vector3f p0p(_v[0].x() - x, _v[0].y() - y, 1.0f);
+        Eigen::Vector3f p1p(_v[1].x() - x, _v[1].y() - y, 1.0f);
+        Eigen::Vector3f p2p(_v[2].x() - x, _v[2].y() - y, 1.0f);
+        if (p0p1.cross(p0p).z() > 0.f) 
+            return p1p2.cross(p1p).z() > 0.f && p2p0.cross(p2p).z() > 0.f;
+        else 
+            return p1p2.cross(p1p).z() < 0.f && p2p0.cross(p2p).z() < 0.f;
+    }
 
+    // std::tuple<float, float, float>
+    inline Eigen::Vector3f computeBarycentric2D(float x, float y, const std::array<Eigen::Vector3f, 3>& v)
+    {
+        float c1 = (x * (v[1].y() - v[2].y()) + (v[2].x() - v[1].x()) * y + v[1].x() * v[2].y() - v[2].x() * v[1].y()) / (v[0].x() * (v[1].y() - v[2].y()) + (v[2].x() - v[1].x()) * v[0].y() + v[1].x() * v[2].y() - v[2].x() * v[1].y());
+        float c2 = (x * (v[2].y() - v[0].y()) + (v[0].x() - v[2].x()) * y + v[2].x() * v[0].y() - v[0].x() * v[2].y()) / (v[1].x() * (v[2].y() - v[0].y()) + (v[0].x() - v[2].x()) * v[1].y() + v[2].x() * v[0].y() - v[0].x() * v[2].y());
+        float c3 = (x * (v[0].y() - v[1].y()) + (v[1].x() - v[0].x()) * y + v[0].x() * v[1].y() - v[1].x() * v[0].y()) / (v[2].x() * (v[0].y() - v[1].y()) + (v[1].x() - v[0].x()) * v[2].y() + v[0].x() * v[1].y() - v[1].x() * v[0].y());
+        return Eigen::Vector3f(c1, c2, c3);
+    }
 
 
 }

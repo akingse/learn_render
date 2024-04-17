@@ -59,6 +59,22 @@ namespace rst //rasterizer 光栅器
 		}
 	};
 
+	enum class Primitive
+	{
+		Line,
+		Triangle
+	};
+	enum class Buffers
+	{
+		Color = 1,
+		Depth = 2
+	};
+	enum class Mode
+	{
+		Wireframe = 1,
+		Shadering = 2
+	};
+
 	//rasterizer 光栅(Raster)由像素构成的一个矩形网格。
 	class Rasterizer
 	{
@@ -71,18 +87,25 @@ namespace rst //rasterizer 光栅器
 			pos_buf.emplace(0, mesh.vbo());
 			ind_buf.emplace(0, mesh.m_ibo);
 		}
+		int load_colors(const std::vector<Eigen::Vector3f>& colors)
+		{
+			int id = next_id++;
+			col_buf.emplace(id, colors);
+			return id;
+		}
 
 		void set_model(const Eigen::Matrix4f& m) {	model = m; }
 		void set_view(const Eigen::Matrix4f& v) { view = v; }
 		void set_projection(const Eigen::Matrix4f& p) { projection = p; }
 
 		void set_pixel_color(const Eigen::Vector3f& point, const Eigen::Vector3f& color);//frame_buf
-		void draw();
+		void draw(Mode mode);
 		std::vector<Eigen::Vector3f>& frame_buffer() { return frame_buf; } //
 
 	private:
 		void draw_line(Eigen::Vector3f begin, Eigen::Vector3f end); //draw_segment
 		void rasterize_wireframe(const Triangle& t);
+		void rasterize_triangle(const Triangle& t);
 
 	private:
 		Eigen::Matrix4f model;
@@ -90,11 +113,15 @@ namespace rst //rasterizer 光栅器
 		Eigen::Matrix4f projection;
 		std::map<int, std::vector<Eigen::Vector3f>> pos_buf; //vbo
 		std::map<int, std::vector<Eigen::Vector3i>> ind_buf; //ibo
+		std::map<int, std::vector<Eigen::Vector3f>> col_buf;
 
 		// one dimension vector, size=width*height
 		int width, height;
 		std::vector<Vector3f> frame_buf;
 		std::vector<float> depth_buf;
 
+		int next_id = 0;
+		int get_index(int x, int y) { return (height - 1 - y) * width + x; }
+		int get_next_id() { return next_id++; }
 	};
 } // namespace rst

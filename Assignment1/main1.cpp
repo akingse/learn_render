@@ -1,8 +1,6 @@
 #include "calculateTransform.h"
 #include "Triangle.hpp"
 #include "rasterizer.hpp"
-#define _USE_MATH_DEFINES
-#include<math.h>
 #ifndef M_PI
 #define M_PI       3.14159265358979323846   // pi
 #endif // !M_PI
@@ -56,7 +54,7 @@ int main(/*int argc, const char** argv*/)
     float aspect_ratio = (float)sz_width / sz_height;
     rst::Rasterizer r(sz_width, sz_height);
     //from up direction 
-    Eigen::Vector3f eye_pos = {0, 0, 10};
+    Eigen::Vector3f eye_pos = {0, 0, 5};
 
     //model
     std::vector<Eigen::Vector3f> pos{{2, 0, -2}, {0, 2, -2}, {-2, 0, -2}};
@@ -74,9 +72,9 @@ int main(/*int argc, const char** argv*/)
         r.clear();
 		r.set_model(get_model_matrix(Vector3f(0, 0, 0), Vector3f(1, 1,0), angle));
 		r.set_view(get_viewing_matrix(eye_pos, Vector3f(0, 0, -1), Vector3f(0, 1, 0)));
-		r.set_projection(get_projection_matrix(45 * M_PI / 180, aspect_ratio, 0.1, 50));
+		r.set_projection(get_projection_matrix(30 * M_PI / 180, aspect_ratio, 0.1, 10)); //注意z轴方向，裁剪空间nf未生效；
         //r.set_projection(get_projection_matrix(-1, 1, -1, 1, 1, 50));
-        r.draw();//Primitive::Triangle
+        r.draw(Mode::Shadering);//Primitive::Triangle
         vector3List debug_show = vector3List(r.frame_buffer());
         //opencv interface
 		cv::Mat image(sz_height, sz_width, CV_32FC3, r.frame_buffer().data());
