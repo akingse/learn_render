@@ -19,6 +19,7 @@ namespace rst //rasterizer ¹âÕ¤Æ÷
 			:m_vbo(vbo), m_ibo(ibo) {}
 		std::vector<Eigen::Vector3f> m_vbo;
 		std::vector<Eigen::Vector3i> m_ibo; //std::array<int, 3>
+		std::vector<Eigen::Vector3f> m_col;
 		Matrix4f m_mat = Matrix4f::Identity();
 		std::vector<Eigen::Vector3f> vbo() const
 		{
@@ -86,13 +87,14 @@ namespace rst //rasterizer ¹âÕ¤Æ÷
 		{
 			pos_buf.emplace(0, mesh.vbo());
 			ind_buf.emplace(0, mesh.m_ibo);
+			col_buf.emplace(0, mesh.m_col);
 		}
-		int load_colors(const std::vector<Eigen::Vector3f>& colors)
-		{
-			int id = next_id++;
-			col_buf.emplace(id, colors);
-			return id;
-		}
+		//int load_colors(const std::vector<Eigen::Vector3f>& colors)
+		//{
+		//	int id = next_id++;
+		//	col_buf.emplace(id, colors);
+		//	return id;
+		//}
 
 		void set_model(const Eigen::Matrix4f& m) {	model = m; }
 		void set_view(const Eigen::Matrix4f& v) { view = v; }
@@ -100,7 +102,7 @@ namespace rst //rasterizer ¹âÕ¤Æ÷
 
 		void set_pixel_color(const Eigen::Vector3f& point, const Eigen::Vector3f& color);//frame_buf
 		void draw(Mode mode);
-		std::vector<Eigen::Vector3f>& frame_buffer() { return frame_buf; } //
+		std::vector<Eigen::Vector3f>& frame_buffer() { return frame_buf; } //output to opencv
 
 	private:
 		void draw_line(Eigen::Vector3f begin, Eigen::Vector3f end); //draw_segment
@@ -117,11 +119,11 @@ namespace rst //rasterizer ¹âÕ¤Æ÷
 
 		// one dimension vector, size=width*height
 		int width, height;
-		std::vector<Vector3f> frame_buf;
-		std::vector<float> depth_buf;
+		std::vector<Vector3f> frame_buf; //record color of pixel
+		std::vector<float> depth_buf; //record zbuffer of pixel
 
 		int next_id = 0;
 		int get_index(int x, int y) { return (height - 1 - y) * width + x; }
-		int get_next_id() { return next_id++; }
+		//int get_next_id() { return next_id++; }
 	};
 } // namespace rst

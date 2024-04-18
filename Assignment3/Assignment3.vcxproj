@@ -139,13 +139,11 @@
     <ClInclude Include="OBJ_Loader.h" />
     <ClInclude Include="rasterizer.hpp" />
     <ClInclude Include="Shader.hpp" />
-    <ClInclude Include="Texture.hpp" />
     <ClInclude Include="Triangle.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="rasterizer.cpp" />
-    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

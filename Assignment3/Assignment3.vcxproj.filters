@@ -27,9 +27,6 @@
     <ClInclude Include="Shader.hpp">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="Triangle.hpp">
       <Filter>src</Filter>
     </ClInclude>
@@ -39,9 +36,6 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="rasterizer.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="Triangle.cpp">

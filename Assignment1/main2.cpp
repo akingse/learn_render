@@ -40,16 +40,20 @@ int main(int argc, const char** argv)
 
 	std::vector<Eigen::Vector3f> cols
 	{
-		{217.0, 238.0, 185.0},
-		{217.0, 238.0, 185.0},
-		{217.0, 238.0, 185.0},
+		//{217.0, 238.0, 185.0},
+		//{217.0, 238.0, 185.0},
+		//{217.0, 238.0, 185.0},
+		//½¥±ägradient ramp
+		{255, 0, 0},
+		{0, 255, 0},
+		{0, 0, 255},
 		{185.0, 217.0, 238.0},
 		{185.0, 217.0, 238.0},
 		{185.0, 217.0, 238.0}
 	};
 	Mesh mesh(pos, ind);
+	mesh.m_col = cols;
 	r.load_mesh(mesh);
-	int col_id = r.load_colors(cols);
 
 	int key = 0;
 	int frame_count = 0;

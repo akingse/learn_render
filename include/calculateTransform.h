@@ -7,6 +7,19 @@ namespace eigen//eigen
         return Eigen::Vector4f(v3[0], v3[1], v3[2], w);
     }
 
+    inline std::array<Eigen::Vector2f, 3> to_vec2(const std::array<Eigen::Vector3f, 3>& v3) //input pointer array
+    {
+        return { 
+            Eigen::Vector2f(v3[0][0], v3[0][1]),
+            Eigen::Vector2f(v3[1][0], v3[1][1]),
+            Eigen::Vector2f(v3[2][0], v3[2][1]) };
+    }
+
+    inline double cross2f(const Eigen::Vector2f& v0, const Eigen::Vector2f& v1)
+    {
+        return v0[0] * v1[1] - v0[1] * v1[0];
+    }
+
     inline std::array<Eigen::Vector3f, 3> operator*(const Eigen::Matrix4f& mat, const std::array<Eigen::Vector3f, 3>& trigon)
     {
         std::array<Eigen::Vector3f, 3> triangle;
@@ -140,6 +153,10 @@ namespace eigen//eigen
 		return scale * trans * perspective;
     }
 
+    //--------------------------------------------------------------------------------------------------------
+    // Computational Geometry
+    //--------------------------------------------------------------------------------------------------------
+
     inline bool insideTriangle(int x, int y, const std::array<Eigen::Vector3f, 3>& _v)
     {
         // check if the point (x, y) is inside the triangle represented by _v[0], _v[1], _v[2]
@@ -158,11 +175,44 @@ namespace eigen//eigen
     // std::tuple<float, float, float>
     inline Eigen::Vector3f computeBarycentric2D(float x, float y, const std::array<Eigen::Vector3f, 3>& v)
     {
-        float c1 = (x * (v[1].y() - v[2].y()) + (v[2].x() - v[1].x()) * y + v[1].x() * v[2].y() - v[2].x() * v[1].y()) / (v[0].x() * (v[1].y() - v[2].y()) + (v[2].x() - v[1].x()) * v[0].y() + v[1].x() * v[2].y() - v[2].x() * v[1].y());
-        float c2 = (x * (v[2].y() - v[0].y()) + (v[0].x() - v[2].x()) * y + v[2].x() * v[0].y() - v[0].x() * v[2].y()) / (v[1].x() * (v[2].y() - v[0].y()) + (v[0].x() - v[2].x()) * v[1].y() + v[2].x() * v[0].y() - v[0].x() * v[2].y());
-        float c3 = (x * (v[0].y() - v[1].y()) + (v[1].x() - v[0].x()) * y + v[0].x() * v[1].y() - v[1].x() * v[0].y()) / (v[2].x() * (v[0].y() - v[1].y()) + (v[1].x() - v[0].x()) * v[2].y() + v[0].x() * v[1].y() - v[1].x() * v[0].y());
+        float c1 = (x * (v[1].y() - v[2].y()) + (v[2].x() - v[1].x()) * y + v[1].x() * v[2].y() - v[2].x() * v[1].y()) 
+            / (v[0].x() * (v[1].y() - v[2].y()) + (v[2].x() - v[1].x()) * v[0].y() + v[1].x() * v[2].y() - v[2].x() * v[1].y());
+        float c2 = (x * (v[2].y() - v[0].y()) + (v[0].x() - v[2].x()) * y + v[2].x() * v[0].y() - v[0].x() * v[2].y()) 
+            / (v[1].x() * (v[2].y() - v[0].y()) + (v[0].x() - v[2].x()) * v[1].y() + v[2].x() * v[0].y() - v[0].x() * v[2].y());
+        float c3 = (x * (v[0].y() - v[1].y()) + (v[1].x() - v[0].x()) * y + v[0].x() * v[1].y() - v[1].x() * v[0].y()) 
+            / (v[2].x() * (v[0].y() - v[1].y()) + (v[1].x() - v[0].x()) * v[2].y() + v[0].x() * v[1].y() - v[1].x() * v[0].y());
+        if (std::isnan(c1))
+            c1 = v[0].x();
+        if (std::isnan(c2))
+            c2 = v[0].y();
+        if (std::isnan(c3))
+            c3 = v[0].z();
         return Eigen::Vector3f(c1, c2, c3);
     }
 
+    //inline Eigen::Vector3f getBarycentricCoordinates(std::array<Eigen::Vector3f, 3>& trigon, const Eigen::Vector3f& P)
+    //{
+    //    Eigen::Vector3f AB = trigon[1] - trigon[0];
+    //    Eigen::Vector3f AC = trigon[2] - trigon[0];
+    //    Eigen::Vector3f AP = P - trigon[0];
+    //    Eigen::Vector3f N = AB.cross(AC);
+    //    float areaABC = N.norm(); 
+    //    float a = (AC.cross(AP)).dot(N) / areaABC;
+    //    float b = (AP.cross(AB)).dot(N) / areaABC;
+    //    float c = 1.0f - a - b;
+    //    return Eigen::Vector3f(a, b, c);
+    //}
+
+    inline Eigen::Vector3f getBarycentricCoordinates(const std::array<Eigen::Vector2f, 3>& trigon, const Eigen::Vector2f& P)
+    {
+        Eigen::Vector2f AB = trigon[1] - trigon[0];
+        Eigen::Vector2f AC = trigon[2] - trigon[0];
+        Eigen::Vector2f AP = P - trigon[0];
+        float areaABC = cross2f(AB, AC);
+        float a = cross2f(AB, AP) / areaABC;
+        float b = cross2f(AP, AC) / areaABC;
+        float c = 1.0f - a - b;
+        return Eigen::Vector3f(a, b, c);
+    }
 
 }
