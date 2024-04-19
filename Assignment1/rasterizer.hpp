@@ -119,11 +119,12 @@ namespace rst //rasterizer ¹âÕ¤Æ÷
 
 		// one dimension vector, size=width*height
 		int width, height;
-		std::vector<Vector3f> frame_buf; //record color of pixel
+		int zNear, zFar;//for clip space
+		std::vector<Vector3f> frame_buf; //record color of pixel (0-255)
 		std::vector<float> depth_buf; //record zbuffer of pixel
 
 		int next_id = 0;
-		int get_index(int x, int y) { return (height - 1 - y) * width + x; }
+		int get_index(int x, int y) { return (height - 1 - y) * width + x; } //Rasterizer origin at left-down, opencv origin at left-up
 		//int get_next_id() { return next_id++; }
 	};
 } // namespace rst

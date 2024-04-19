@@ -22,7 +22,7 @@ void rst::Rasterizer::clear()
 	std::fill(depth_buf.begin(), depth_buf.end(), std::numeric_limits<float>::infinity()); //inf
 }
 
-void rst::Rasterizer::set_pixel_color(const Eigen::Vector3f& point, const Eigen::Vector3f& color)
+void rst::Rasterizer::set_pixel_color(const Eigen::Vector3f& point, const Eigen::Vector3f& color) //int coord in width*height
 {
 	//old index: auto ind = point.y() + point.x() * width;
 	if (point.x() < 0 || point.x() >= width ||
@@ -185,13 +185,6 @@ void Rasterizer::rasterize_triangle(const Triangle& t)
 		{
 			return array<Eigen::Vector3f, 3>{v[0], v[1], v[2]};
 		};
-	auto _toArray2 = [](const Vector3f* v)->array<Eigen::Vector2f, 3>
-	{
-		return array<Eigen::Vector2f, 3>{
-			Vector2f(v[0][0], v[0][1]), 
-			Vector2f(v[1][0], v[1][1]), 
-			Vector2f(v[2][0], v[2][1]), };
-	};
 	auto _getColorInterp = [](const array<Eigen::Vector3f, 3>& trigon, Eigen::Vector3f bc)->Eigen::Vector3f
 	{
 		Eigen::Vector3f AB = trigon[1] - trigon[0];
@@ -200,11 +193,15 @@ void Rasterizer::rasterize_triangle(const Triangle& t)
 	};
 	// If so, use the following code to get the interpolated z value.
 	//set the current pixel (use the set_pixel function) to the color of the triangle (use getColor function) if it should be painted.
-	for (int x = floor(box.min()[0]); x < ceil(box.max()[0]); x++)
+	for (int i = floor(box.min()[0]); i < ceil(box.max()[0]); i++)
 	{
-		for (int y = floor(box.min()[1]); y < ceil(box.max()[1]); y++)
+		for (int j = floor(box.min()[1]); j < ceil(box.max()[1]); j++)
 		{
-			if (!insideTriangle(x + 0.5f, y + 0.5f, _toArray(t.vertex)))
+			if (i < 0 || width < 0|| j < 0 || height < 0) //clip space
+				continue;
+			float x = i + 0.5f; //center of pixel
+			float y = j + 0.5f;
+			if (!insideTriangle(x, y, _toArray(t.vertex)))
 				continue;
 			//[alpha, beta, gamma]
 			Vector3f abg = computeBarycentric2D(x, y, _toArray(t.vertex));
@@ -214,16 +211,23 @@ void Rasterizer::rasterize_triangle(const Triangle& t)
 			//z_interpolated *= w_reciprocal;
 			Eigen::Vector3f bc = getBarycentricCoordinates(to_vec2(_toArray(t.vertex)), Eigen::Vector2f(x, y));
 			Vector3f color = _getColorInterp(t.getColor(), bc);
-
-			int id = get_index(x, y);
+			int id = get_index(i, j);
 			//if (depth_buf.size() <= id || id < 0)
 			//	continue;
 			if (abg.z() < depth_buf[id])
 			{
-				Eigen::Vector3f point(x, y, 1.0f);
+				Eigen::Vector3f point(i, j, 1.0f); //without offset
 				set_pixel_color(point, color);
-				depth_buf[get_index(x, y)] = abg.z();
+				depth_buf[get_index(i, j)] = abg.z();
 			}
 		}
 	}
+	////test coordinate origon
+	//for (int i = 0; i < 10; ++i)
+	//{
+	//	for (int j = 0; j < width/2; ++j)
+	//		set_pixel_color(Vector3f(j, i, 0), Vector3f(255, 255, 255));
+	//}
+
+
 }
