@@ -25,10 +25,10 @@ int main(int argc, const char** argv)
 
     std::string filename = "output.png";
     objl::Loader Loader;
-    std::string obj_path = "../models/spot/";
+    std::string obj_path = "C:/Users/wangk/source/repos/learn_render/Assignment1/models/spot/"; //fix path
 
     // Load .obj File
-    bool loadout = Loader.LoadFile("../models/spot/spot_triangulated_good.obj");
+	bool loadout = Loader.LoadFile(obj_path + "spot_triangulated_good.obj");
     for(auto mesh:Loader.LoadedMeshes)
     {
         for(int i=0;i<mesh.Vertices.size();i+=3)
@@ -112,7 +112,7 @@ int main(int argc, const char** argv)
         cv::cvtColor(image, image, cv::COLOR_RGB2BGR);
 
         cv::imshow("image", image);
-        cv::imwrite(filename, image);
+        //cv::imwrite(filename, image);
         key = cv::waitKey(10);
 
         if (key == 'a' )
