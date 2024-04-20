@@ -25,7 +25,7 @@ int main(int argc, const char** argv)
 	int sz_width = 700;
 	int sz_height = 700;
 	float zNear = 0.1;
-	float zFar = 3;
+	float zFar = 50;
 	float aspect_ratio = (float)sz_width / sz_height;
 	rst::Rasterizer r(sz_width, sz_height, zNear, zFar);
 	Eigen::Vector3f eye_pos = { 0,0,5 };

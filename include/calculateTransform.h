@@ -10,6 +10,11 @@ namespace eigen//eigen
         return Eigen::Vector4f(v3[0], v3[1], v3[2], w);
     }
 
+    inline std::array<Eigen::Vector4f,3> to_vec4(const std::array<Eigen::Vector3f, 3>& v3, float w = 1.0f)
+    {
+        return { to_vec4(v3[0],w), to_vec4(v3[1],w), to_vec4(v3[2],w) };
+    }
+
     inline std::array<Eigen::Vector2f, 3> to_vec2(const std::array<Eigen::Vector3f, 3>& v3) //input pointer array
     {
         return { 
@@ -22,6 +27,11 @@ namespace eigen//eigen
     {
         return v0[0] * v1[1] - v0[1] * v1[0];
     }
+
+    inline std::array<Eigen::Vector3f, 3> _toArray(const Eigen::Vector3f* v)
+    {
+        return std::array<Eigen::Vector3f, 3>{v[0], v[1], v[2]};
+    };
 
     inline std::array<Eigen::Vector3f, 3> operator*(const Eigen::Matrix4f& mat, const std::array<Eigen::Vector3f, 3>& trigon)
     {
@@ -218,5 +228,18 @@ namespace eigen//eigen
         return getBarycentricInterpolate(trigon, bc);
     }
 
+    inline Eigen::Vector3f interpolate(float alpha, float beta, float gamma, const Eigen::Vector3f& vert1, const Eigen::Vector3f& vert2, const Eigen::Vector3f& vert3, float weight)
+    {
+        return (alpha * vert1 + beta * vert2 + gamma * vert3) / weight;
+    }
+
+    inline Eigen::Vector2f interpolate(float alpha, float beta, float gamma, const Eigen::Vector2f& vert1, const Eigen::Vector2f& vert2, const Eigen::Vector2f& vert3, float weight)
+    {
+        float u = (alpha * vert1[0] + beta * vert2[0] + gamma * vert3[0]);
+        float v = (alpha * vert1[1] + beta * vert2[1] + gamma * vert3[1]);
+        u /= weight;
+        v /= weight;
+        return Eigen::Vector2f(u, v);
+    }
 
 }

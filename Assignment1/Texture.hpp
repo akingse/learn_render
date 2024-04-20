@@ -4,10 +4,10 @@
 
 #ifndef RASTERIZER_TEXTURE_H
 #define RASTERIZER_TEXTURE_H
-#include "global.hpp"
 #include <Eigen/Dense> //$(SolutionDir)..\TPL\eigen-3.4.0
 #include <opencv2/opencv.hpp>
-class Texture{
+class Texture
+{
 private:
     cv::Mat image_data;
 
@@ -24,9 +24,9 @@ public:
 
     Eigen::Vector3f getColor(float u, float v)
     {
-        auto u_img = u * width;
-        auto v_img = (1 - v) * height;
-        auto color = image_data.at<cv::Vec3b>(v_img, u_img);
+        int u_img = u * width;
+        int v_img = (1 - v) * height;
+        const cv::Vec3b& color = image_data.at<cv::Vec3b>(v_img, u_img);
         return Eigen::Vector3f(color[0], color[1], color[2]);
     }
 

@@ -15,16 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="global.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="OBJ_Loader.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="rasterizer.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="Shader.hpp">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="Triangle.hpp">
@@ -32,9 +23,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="rasterizer.cpp">
       <Filter>src</Filter>
     </ClCompile>

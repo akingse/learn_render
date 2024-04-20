@@ -1,7 +1,8 @@
 #include "Triangle.hpp"
 #include <algorithm>
 #include <array>
-#include <stdexcept>
+#include "Texture.hpp"
+
 
 //Triangle::Triangle()
 //{

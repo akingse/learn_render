@@ -1,5 +1,6 @@
 #include <vector>
 #include <algorithm>
+#include "Shader.hpp"
 #include "rasterizer.hpp"
 #include "calculateTransform.h"
 //#include <opencv2/opencv.hpp>
@@ -24,12 +25,12 @@ void rst::Rasterizer::clear()
 	std::fill(depth_buf.begin(), depth_buf.end(), std::numeric_limits<float>::infinity()); //inf
 	for (int i = 0; i < frame_buf_2xSSAA.size(); i++) 
 	{
-		frame_buf_2xSSAA[i].resize(4);
+		//frame_buf_2xSSAA[i].resize(4);
 		std::fill(frame_buf_2xSSAA[i].begin(), frame_buf_2xSSAA[i].end(), Eigen::Vector3f{ 0, 0, 0 });
 	}
 	for (int i = 0; i < depth_buf_2xSSAA.size(); i++) 
 	{
-		depth_buf_2xSSAA[i].resize(4);
+		//depth_buf_2xSSAA[i].resize(4);
 		std::fill(depth_buf_2xSSAA[i].begin(), depth_buf_2xSSAA[i].end(), std::numeric_limits<float>::infinity());
 	}
 }
@@ -193,10 +194,6 @@ void Rasterizer::rasterize_triangle(const Triangle& t)
 	AlignedBox3f box;
 	for (const auto& iter : t.vertex)
 		box.extend(iter);
-	auto _toArray = [](const Vector3f* v)->array<Eigen::Vector3f, 3>
-		{
-			return array<Eigen::Vector3f, 3>{v[0], v[1], v[2]};
-		};
 
 	// If so, use the following code to get the interpolated z value.
 	//set the current pixel (use the set_pixel function) to the color of the triangle (use getColor function) if it should be painted.
@@ -237,10 +234,6 @@ void Rasterizer::rasterize_triangle_ssaa(const Triangle& t)
 	AlignedBox3f box;
 	for (const auto& iter : t.vertex)
 		box.extend(iter);
-	auto _toArray = [](const Vector3f* v)->array<Eigen::Vector3f, 3>
-	{
-		return array<Eigen::Vector3f, 3>{v[0], v[1], v[2]};
-	};
 	for (int x = floor(box.min()[0]); x < ceil(box.max()[0]); x++)
 	{
 		for (int y = floor(box.min()[1]); y < ceil(box.max()[1]); y++)
@@ -290,5 +283,89 @@ void Rasterizer::rasterize_triangle_ssaa(const Triangle& t)
 			set_pixel_color(Eigen::Vector3f(x, y, 1.0f), color);
 		}
 	}
+
+}
+
+void rst::Rasterizer::draw(std::vector<Triangle*>& TriangleList) 
+{
+
+	float f1 = (50 - 0.1) / 2.0;
+	float f2 = (50 + 0.1) / 2.0;
+
+	Eigen::Matrix4f mvp = projection * view * model;
+	for (const auto& t : TriangleList)
+	{
+		Triangle newtri = *t;
+		std::array<Eigen::Vector4f, 3> mm = to_vec4(view * model * _toArray(t->vertex));
+		std::array<Eigen::Vector3f, 3> viewspace_pos;
+		std::transform(mm.begin(), mm.end(), viewspace_pos.begin(), [](auto& v) {
+			return v.template head<3>();
+			});
+
+		std::array<Eigen::Vector4f, 3> v = to_vec4(mvp * _toArray(t->vertex));
+
+		//Homogeneous division
+		for (auto& vec : v) {
+			vec.x() /= vec.w();
+			vec.y() /= vec.w();
+			vec.z() /= vec.w();
+		}
+
+		Eigen::Matrix4f inv_trans = (view * model).inverse().transpose();
+		Eigen::Vector4f n[] = {
+				inv_trans * to_vec4(t->normal[0], 0.0f),
+				inv_trans * to_vec4(t->normal[1], 0.0f),
+				inv_trans * to_vec4(t->normal[2], 0.0f)
+		};
+
+		//Viewport transformation
+		for (auto& vert : v)
+		{
+			vert.x() = 0.5 * width * (vert.x() + 1.0);
+			vert.y() = 0.5 * height * (vert.y() + 1.0);
+			vert.z() = vert.z() * f1 + f2;
+		}
+
+		for (int i = 0; i < 3; ++i)
+		{
+			//screen space coordinates
+			newtri.setVertex(i, v[i].hnormalized()); //ve4->vec3
+		}
+
+		for (int i = 0; i < 3; ++i)
+		{
+			//view space normal
+			newtri.setNormal(i, n[i].head<3>());
+			newtri.setColor(i, { 148, 121.0, 92.0 });
+		}
+		// Also pass view space vertice position
+		rasterize_triangle(newtri, viewspace_pos);
+	}
+}
+
+//Screen space rasterization
+void rst::Rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eigen::Vector3f, 3>& view_pos)
+{
+	// TODO: From your HW3, get the triangle rasterization code.
+	// TODO: Inside your rasterization loop:
+	//    * v[i].w() is the vertex view space depth value z.
+	//    * Z is interpolated view space depth for the current pixel
+	//    * zp is depth between zNear and zFar, used for z-buffer
+
+	// float Z = 1.0 / (alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
+	// float zp = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
+	// zp *= Z;
+
+	// TODO: Interpolate the attributes:
+	// auto interpolated_color
+	// auto interpolated_normal
+	// auto interpolated_texcoords
+	// auto interpolated_shadingcoords
+
+	// Use: fragment_shader_payload payload( interpolated_color, interpolated_normal.normalized(), interpolated_texcoords, texture ? &*texture : nullptr);
+	// Use: payload.view_pos = interpolated_shadingcoords;
+	// Use: Instead of passing the triangle's color directly to the frame buffer, pass the color to the shaders first to get the final color;
+	// Use: auto pixel_color = fragment_shader(payload);
+
 
 }

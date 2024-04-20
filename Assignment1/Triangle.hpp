@@ -4,8 +4,8 @@
 
 #ifndef RASTERIZER_TRIANGLE_H
 #define RASTERIZER_TRIANGLE_H
-
 #include <Eigen/Dense> 
+#include "Texture.hpp"
 
 using namespace Eigen;
 /*
@@ -25,6 +25,7 @@ public:
 	Vector3f normal[3];     // normal vector for each vertex
 	Vector3f color[3];      // color at each vertex;
 	Vector2f tex_coords[3]; // texture u,v
+	Texture* tex = nullptr;
 
 	Triangle()
 	{
@@ -43,10 +44,20 @@ public:
 	{
 		color[ind] = 1 / 255.f * rgb;
 	};
+	void setColors(const std::array<Vector3f, 3>& colors)
+	{
+		setColor(0, colors[0]);
+		setColor(1, colors[1]);
+		setColor(2, colors[2]);
+	}
 	void setTexCoord(int ind, float s, float t)
 	{
 		tex_coords[ind] = Vector2f(s, t);
 	}; /*set i-th vertex texture coordinate*/
+	void setTexCoord(int ind, Vector2f uv) /*set i-th vertex texture coordinate*/
+	{
+		tex_coords[ind] = uv;
+	}
 	std::array<Vector3f, 3> getColor() const //1->255
 	{
 		return { 255 * color[0], 255 * color[1], 255 * color[2] };
