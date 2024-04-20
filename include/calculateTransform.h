@@ -2,6 +2,9 @@
 #include <Eigen/Dense> 
 namespace eigen//eigen
 {
+    typedef std::array<Eigen::Vector2f, 3> Trangle2d;
+    typedef std::array<Eigen::Vector3f, 3> Trangle3d;
+
     inline Eigen::Vector4f to_vec4(const Eigen::Vector3f& v3, float w = 1.0f)
     {
         return Eigen::Vector4f(v3[0], v3[1], v3[2], w);
@@ -157,7 +160,7 @@ namespace eigen//eigen
     // Computational Geometry
     //--------------------------------------------------------------------------------------------------------
 
-    inline bool insideTriangle(int x, int y, const std::array<Eigen::Vector3f, 3>& _v)
+    inline bool insideTriangle(float x, float y, const std::array<Eigen::Vector3f, 3>& _v)
     {
         // check if the point (x, y) is inside the triangle represented by _v[0], _v[1], _v[2]
         Eigen::Vector3f p0p1(_v[0].x() - _v[1].x(), _v[0].y() - _v[1].y(), 1.0f);
@@ -190,20 +193,14 @@ namespace eigen//eigen
         return Eigen::Vector3f(c1, c2, c3);
     }
 
-    //inline Eigen::Vector3f getBarycentricCoordinates(std::array<Eigen::Vector3f, 3>& trigon, const Eigen::Vector3f& P)
-    //{
-    //    Eigen::Vector3f AB = trigon[1] - trigon[0];
-    //    Eigen::Vector3f AC = trigon[2] - trigon[0];
-    //    Eigen::Vector3f AP = P - trigon[0];
-    //    Eigen::Vector3f N = AB.cross(AC);
-    //    float areaABC = N.norm(); 
-    //    float a = (AC.cross(AP)).dot(N) / areaABC;
-    //    float b = (AP.cross(AB)).dot(N) / areaABC;
-    //    float c = 1.0f - a - b;
-    //    return Eigen::Vector3f(a, b, c);
-    //}
+    inline Eigen::Vector3f getBarycentricInterpolate(const std::array<Eigen::Vector3f, 3>& trigon, Eigen::Vector2f bc)//->Eigen::Vector3f
+    {
+        Eigen::Vector3f AB = trigon[1] - trigon[0];
+        Eigen::Vector3f AC = trigon[2] - trigon[0];
+        return trigon[0] + bc[0] * AB + bc[1] * AC;
+    }
 
-    inline Eigen::Vector3f getBarycentricCoordinates(const std::array<Eigen::Vector2f, 3>& trigon, const Eigen::Vector2f& P)
+    inline Eigen::Vector2f getBarycentricCoordinate(const std::array<Eigen::Vector2f, 3>& trigon, const Eigen::Vector2f& P)
     {
         Eigen::Vector2f AB = trigon[1] - trigon[0];
         Eigen::Vector2f AC = trigon[2] - trigon[0];
@@ -211,8 +208,15 @@ namespace eigen//eigen
         float areaABC = cross2f(AB, AC);
         float a = cross2f(AB, AP) / areaABC;
         float b = cross2f(AP, AC) / areaABC;
-        float c = 1.0f - a - b;
-        return Eigen::Vector3f(a, b, c);
+        //float c = 1.0f - a - b;
+        return Eigen::Vector2f(b, a); //its inverse
     }
+
+    inline Eigen::Vector3f getBarycentricCoordinate(const std::array<Eigen::Vector3f, 3>& trigon, const Eigen::Vector2f& P)
+    {
+        Eigen::Vector2f bc = getBarycentricCoordinate(to_vec2(trigon), P);
+        return getBarycentricInterpolate(trigon, bc);
+    }
+
 
 }

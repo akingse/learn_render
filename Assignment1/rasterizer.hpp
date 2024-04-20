@@ -73,14 +73,15 @@ namespace rst //rasterizer 光栅器
 	enum class Mode
 	{
 		Wireframe = 1,
-		Shadering = 2
+		Shadering = 2,
+		Shader_SSAA = 3,
 	};
 
 	//rasterizer 光栅(Raster)由像素构成的一个矩形网格。
 	class Rasterizer
 	{
 	public:
-		Rasterizer(int w, int h);
+		Rasterizer(int w, int h, float n, float f);
 		void clear();
 
 		void load_mesh(const Mesh& mesh)
@@ -99,6 +100,7 @@ namespace rst //rasterizer 光栅器
 		void set_model(const Eigen::Matrix4f& m) {	model = m; }
 		void set_view(const Eigen::Matrix4f& v) { view = v; }
 		void set_projection(const Eigen::Matrix4f& p) { projection = p; }
+		void set_clip_space(float n, float f) { zNear = n; zFar = f; }//l r b t
 
 		void set_pixel_color(const Eigen::Vector3f& point, const Eigen::Vector3f& color);//frame_buf
 		void draw(Mode mode);
@@ -108,6 +110,7 @@ namespace rst //rasterizer 光栅器
 		void draw_line(Eigen::Vector3f begin, Eigen::Vector3f end); //draw_segment
 		void rasterize_wireframe(const Triangle& t);
 		void rasterize_triangle(const Triangle& t);
+		void rasterize_triangle_ssaa(const Triangle& t);
 
 	private:
 		Eigen::Matrix4f model;
@@ -119,12 +122,16 @@ namespace rst //rasterizer 光栅器
 
 		// one dimension vector, size=width*height
 		int width, height;
-		int zNear, zFar;//for clip space
+		float zNear, zFar;//for clip space
 		std::vector<Vector3f> frame_buf; //record color of pixel (0-255)
 		std::vector<float> depth_buf; //record zbuffer of pixel
+		std::vector<std::vector<Vector3f>> frame_buf_2xSSAA;//super-sampling Anti-aliasing
+		std::vector<std::vector<float>> depth_buf_2xSSAA;
 
-		int next_id = 0;
 		int get_index(int x, int y) { return (height - 1 - y) * width + x; } //Rasterizer origin at left-down, opencv origin at left-up
+		//int next_id = 0;
 		//int get_next_id() { return next_id++; }
+
+
 	};
 } // namespace rst

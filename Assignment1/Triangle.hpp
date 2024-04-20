@@ -47,7 +47,7 @@ public:
 	{
 		tex_coords[ind] = Vector2f(s, t);
 	}; /*set i-th vertex texture coordinate*/
-	std::array<Vector3f, 3> getColor() const
+	std::array<Vector3f, 3> getColor() const //1->255
 	{
 		return { 255 * color[0], 255 * color[1], 255 * color[2] };
 	} // Only one color per triangle.

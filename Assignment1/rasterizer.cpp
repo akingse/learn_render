@@ -10,23 +10,35 @@ using namespace rst;
 using namespace Eigen;
 using namespace eigen;
 
-rst::Rasterizer::Rasterizer(int w, int h) : width(w), height(h)
+rst::Rasterizer::Rasterizer(int w, int h, float n, float f) : width(w), height(h), zNear(n), zFar(f)
 {
 	frame_buf.resize(w * h);
 	depth_buf.resize(w * h);
+	frame_buf_2xSSAA.resize(w * h);
+	depth_buf_2xSSAA.resize(w * h);
 }
 
 void rst::Rasterizer::clear()
 {
 	std::fill(frame_buf.begin(), frame_buf.end(), Eigen::Vector3f{ 0, 0, 0 });
 	std::fill(depth_buf.begin(), depth_buf.end(), std::numeric_limits<float>::infinity()); //inf
+	for (int i = 0; i < frame_buf_2xSSAA.size(); i++) 
+	{
+		frame_buf_2xSSAA[i].resize(4);
+		std::fill(frame_buf_2xSSAA[i].begin(), frame_buf_2xSSAA[i].end(), Eigen::Vector3f{ 0, 0, 0 });
+	}
+	for (int i = 0; i < depth_buf_2xSSAA.size(); i++) 
+	{
+		depth_buf_2xSSAA[i].resize(4);
+		std::fill(depth_buf_2xSSAA[i].begin(), depth_buf_2xSSAA[i].end(), std::numeric_limits<float>::infinity());
+	}
 }
 
 void rst::Rasterizer::set_pixel_color(const Eigen::Vector3f& point, const Eigen::Vector3f& color) //int coord in width*height
 {
-	//old index: auto ind = point.y() + point.x() * width;
 	if (point.x() < 0 || point.x() >= width ||
 		point.y() < 0 || point.y() >= height)
+		//-point.z() < zNear || -point.z() > zFar) // been pre check
 		return;
 	int ind = (height - point.y()) * width + point.x();
 	if (ind < 0 || frame_buf.size() <= ind)
@@ -128,10 +140,8 @@ void rst::Rasterizer::draw(Mode mode)
 	const vector<Eigen::Vector3f>& vbo = pos_buf[0];
 	const vector<Eigen::Vector3i>& ibo = ind_buf[0];
 	const vector<Eigen::Vector3f>& col = col_buf[0];
-
-	float f1 = (50 - 0.1) / 2.0;
-	float f2 = (50 + 0.1) / 2.0;
-
+	float f1 = (zFar - zNear) / 2.0;
+	float f2 = (zFar + zNear) / 2.0;
 	Eigen::Matrix4f mvp = projection * view * model;
 	for (const auto& face : ibo)
 	{
@@ -141,7 +151,7 @@ void rst::Rasterizer::draw(Mode mode)
 		{
 			vert.x() = 0.5 * width * (vert.x() + 1.0f); //move canonical cube to origin
 			vert.y() = 0.5 * height * (vert.y() + 1.0f);
-			vert.z() = vert.z() * f1 + f2;
+			vert.z() = vert.z() * f2 + f1;// vert.z()* f1 + f2;
 		}
 		Triangle t;
 		for (int i = 0; i < 3; ++i)
@@ -154,6 +164,8 @@ void rst::Rasterizer::draw(Mode mode)
 			rasterize_wireframe(t);
 		else if (Mode::Shadering == mode)
 			rasterize_triangle(t);
+		else if (Mode::Shader_SSAA == mode)
+			rasterize_triangle_ssaa(t);
 
 	}
 }
@@ -185,12 +197,7 @@ void Rasterizer::rasterize_triangle(const Triangle& t)
 		{
 			return array<Eigen::Vector3f, 3>{v[0], v[1], v[2]};
 		};
-	auto _getColorInterp = [](const array<Eigen::Vector3f, 3>& trigon, Eigen::Vector3f bc)->Eigen::Vector3f
-	{
-		Eigen::Vector3f AB = trigon[1] - trigon[0];
-		Eigen::Vector3f AC = trigon[2] - trigon[0];
-		return trigon[0] + bc[0] * AB + bc[1] * AC;
-	};
+
 	// If so, use the following code to get the interpolated z value.
 	//set the current pixel (use the set_pixel function) to the color of the triangle (use getColor function) if it should be painted.
 	for (int i = floor(box.min()[0]); i < ceil(box.max()[0]); i++)
@@ -204,30 +211,84 @@ void Rasterizer::rasterize_triangle(const Triangle& t)
 			if (!insideTriangle(x, y, _toArray(t.vertex)))
 				continue;
 			//[alpha, beta, gamma]
-			Vector3f abg = computeBarycentric2D(x, y, _toArray(t.vertex));
+			//Vector3f abg = computeBarycentric2D(x, y, _toArray(t.vertex));
 			//Vector3f color = computeBarycentric2D(x, y, t.getColor());
 			//float w_reciprocal = 1.0 / (abg[0] / v[0].w() + abg[1] / v[1].w() + abg[2] / v[2].w());
 			//float z_interpolated = abg[0] * v[0].z() / v[0].w() + abg[1] * v[1].z() / v[1].w() + abg[2] * v[2].z() / v[2].w();
 			//z_interpolated *= w_reciprocal;
-			Eigen::Vector3f bc = getBarycentricCoordinates(to_vec2(_toArray(t.vertex)), Eigen::Vector2f(x, y));
-			Vector3f color = _getColorInterp(t.getColor(), bc);
+			Eigen::Vector3f point = getBarycentricCoordinate(_toArray(t.vertex), Eigen::Vector2f(x, y));
+			Eigen::Vector3f color = getBarycentricInterpolate(t.getColor(), getBarycentricCoordinate(to_vec2(_toArray(t.vertex)), Eigen::Vector2f(x, y)));
+			//Vector3f color = _getColorInterp(t.getColor(), bc);
 			int id = get_index(i, j);
-			//if (depth_buf.size() <= id || id < 0)
-			//	continue;
-			if (abg.z() < depth_buf[id])
+			if (depth_buf.size() <= id || id < 0)
+				continue;
+			if (point.z() > depth_buf[id])
+				continue;
+			//Eigen::Vector3f point(i, j, 1.0f); //without offset
+			set_pixel_color(Vector3f(i, j, point[2]), color);
+			depth_buf[id] = point.z();
+		}
+	}
+}
+
+void Rasterizer::rasterize_triangle_ssaa(const Triangle& t)
+{
+	std::array<Vector4f, 3> v = t.toVector4();
+	AlignedBox3f box;
+	for (const auto& iter : t.vertex)
+		box.extend(iter);
+	auto _toArray = [](const Vector3f* v)->array<Eigen::Vector3f, 3>
+	{
+		return array<Eigen::Vector3f, 3>{v[0], v[1], v[2]};
+	};
+	for (int x = floor(box.min()[0]); x < ceil(box.max()[0]); x++)
+	{
+		for (int y = floor(box.min()[1]); y < ceil(box.max()[1]); y++)
+		{
+			Eigen::Vector3f point(x, y, 1.0);
+			//child pixel
+			int inside_count = 0;
+			int update_depth = 0;
+			int index = 0;
+			int id = get_index(x, y); //pixel index
+			if (depth_buf.size() <= id || id < 0)
+				continue;
+			for (float i = 0.25; i < 1.0; i += 0.5)
 			{
-				Eigen::Vector3f point(i, j, 1.0f); //without offset
-				set_pixel_color(point, color);
-				depth_buf[get_index(i, j)] = abg.z();
+				for (float j = 0.25; j < 1.0; j += 0.5)
+				{
+					float cx = x + i + 0.5; //pixel center
+					float cy = y + j + 0.5;
+					if (!insideTriangle(cx, cy, _toArray(t.vertex)))
+						continue;
+					Eigen::Vector3f point = getBarycentricCoordinate(_toArray(t.vertex), Eigen::Vector2f(cx, cy));
+					if (point.z() < depth_buf_2xSSAA[id][index]) //down sampling
+					{
+						frame_buf_2xSSAA[id][index] = t.getColor()[0];
+						depth_buf_2xSSAA[id][index] = point.z();
+					}
+					if (frame_buf_2xSSAA[id][index].isZero())
+					{
+						frame_buf_2xSSAA[id][index] = t.getColor()[0];
+					}
+					//inside_count++;
+					//update_depth += point.z();
+					index++;
+				}
 			}
 		}
 	}
-	////test coordinate origon
-	//for (int i = 0; i < 10; ++i)
-	//{
-	//	for (int j = 0; j < width/2; ++j)
-	//		set_pixel_color(Vector3f(j, i, 0), Vector3f(255, 255, 255));
-	//}
-
+	for (int x = 0; x < width; x++) 
+	{
+		for (int y = 0; y < height; y++)
+		{
+			Eigen::Vector3f color(0, 0, 0);
+			for (int i = 0; i < 4; i++)
+				color += frame_buf_2xSSAA[get_index(x, y)][i];
+			color /= 4;
+			//if(!color.isZero())
+			set_pixel_color(Eigen::Vector3f(x, y, 1.0f), color);
+		}
+	}
 
 }
