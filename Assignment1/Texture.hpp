@@ -1,18 +1,18 @@
 //
 // Created by LEI XU on 4/27/19.
-//
+// head-only
+#pragma once
 
 #ifndef RASTERIZER_TEXTURE_H
 #define RASTERIZER_TEXTURE_H
-#include <Eigen/Dense> //$(SolutionDir)..\TPL\eigen-3.4.0
-#include <opencv2/opencv.hpp>
+
 class Texture
 {
 private:
-    cv::Mat image_data;
+    cv::Mat image_data; //opencv matrix
 
 public:
-    Texture(const std::string& name)
+    Texture(const std::string& name) //read image uv-color using opencv
     {
         image_data = cv::imread(name);
         cv::cvtColor(image_data, image_data, cv::COLOR_RGB2BGR);
@@ -21,8 +21,7 @@ public:
     }
 
     int width, height;
-
-    Eigen::Vector3f getColor(float u, float v)
+    inline Eigen::Vector3f getColor(float u, float v) const
     {
         int u_img = u * width;
         int v_img = (1 - v) * height;

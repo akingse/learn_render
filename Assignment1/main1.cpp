@@ -51,8 +51,10 @@ int main(/*int argc, const char** argv*/)
 {
     int sz_width = 700;
     int sz_height = 500;
+    float zNear = 0.1;
+    float zFar = 50;
     float aspect_ratio = (float)sz_width / sz_height;
-    rst::Rasterizer r(sz_width, sz_height);
+    rst::Rasterizer r(sz_width, sz_height, zNear, zFar);
     //from up direction 
     Eigen::Vector3f eye_pos = {0, 0, 5};
 
@@ -74,7 +76,7 @@ int main(/*int argc, const char** argv*/)
 		r.set_view(get_viewing_matrix(eye_pos, Vector3f(0, 0, -1), Vector3f(0, 1, 0)));
 		r.set_projection(get_projection_matrix(30 * M_PI / 180, aspect_ratio, 0.1, 10)); //注意z轴方向，裁剪空间nf未生效；
         //r.set_projection(get_projection_matrix(-1, 1, -1, 1, 1, 50));
-        r.draw(Mode::Shadering);//Primitive::Triangle
+        r.draw(Mode::Shadering);
         vector3List debug_show = vector3List(r.frame_buffer());
         //opencv interface
 		cv::Mat image(sz_height, sz_width, CV_32FC3, r.frame_buffer().data());

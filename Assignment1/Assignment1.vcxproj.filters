@@ -13,13 +13,13 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="com">
+      <UniqueIdentifier>{33e9b7b9-a1d0-425e-a5ef-fde8e374d281}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main1.cpp">
       <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\include\calculateTransform.cpp">
-      <Filter>头文件</Filter>
     </ClCompile>
     <ClCompile Include="rasterizer.cpp">
       <Filter>头文件</Filter>
@@ -39,18 +39,18 @@
     <ClCompile Include="Shader.cpp">
       <Filter>头文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\include\calculateTransform.cpp">
+      <Filter>com</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\pch.cpp">
+      <Filter>com</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\calculateTransform.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="rasterizer.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Triangle.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="OBJ_Loader.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Shader.hpp">
@@ -58,6 +58,15 @@
     </ClInclude>
     <ClInclude Include="Texture.hpp">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="OBJ_Loader.h">
+      <Filter>com</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\calculateTransform.h">
+      <Filter>com</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\pch.h">
+      <Filter>com</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

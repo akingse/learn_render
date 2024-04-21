@@ -1,13 +1,8 @@
-#include <vector>
-#include "rasterizer.hpp"
-#include "Shader.hpp"
-#include "calculateTransform.h"
-
+#include "pch.h"
 using namespace std;
 using namespace rst;
 using namespace Eigen;
 using namespace eigen;
-
 
 Eigen::Vector3f texture_fragment_shader(const fragment_shader_payload& payload)
 {

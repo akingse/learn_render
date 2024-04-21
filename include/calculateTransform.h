@@ -1,5 +1,4 @@
 #pragma once
-#include <Eigen/Dense> 
 namespace eigen//eigen
 {
     typedef std::array<Eigen::Vector2f, 3> Trangle2d;

@@ -1,11 +1,4 @@
-#include <vector>
-#include <algorithm>
-#include "Shader.hpp"
-#include "rasterizer.hpp"
-#include "calculateTransform.h"
-//#include <opencv2/opencv.hpp>
-#include <math.h>
-#include <stdexcept>
+#include"pch.h"
 using namespace std;
 using namespace rst;
 using namespace Eigen;
@@ -158,7 +151,10 @@ void rst::Rasterizer::draw(Mode mode)
 		for (int i = 0; i < 3; ++i)
 		{
 			t.setVertex(i, trigon[i]);
-			t.setColor(i, col[face[i]]);
+			if (!col.empty())
+				t.setColor(i, col[face[i]]);
+			else
+				t.setColor(i, colorWhite);
 		}
 
 		if (Mode::Wireframe == mode)
@@ -181,7 +177,6 @@ void rst::Rasterizer::rasterize_wireframe(const Triangle& t)
 //Screen space rasterization
 void Rasterizer::rasterize_triangle(const Triangle& t) 
 {
-	std::array<Vector4f, 3> v = t.toVector4();
 	// Find out the bounding box of current triangle.
 	// iterate through the pixel and find if the current pixel is inside the triangle
 	//std::vector<float> x_arry{ v[0].x(), v[1].x(), v[2].x() };
@@ -230,7 +225,6 @@ void Rasterizer::rasterize_triangle(const Triangle& t)
 
 void Rasterizer::rasterize_triangle_ssaa(const Triangle& t)
 {
-	std::array<Vector4f, 3> v = t.toVector4();
 	AlignedBox3f box;
 	for (const auto& iter : t.vertex)
 		box.extend(iter);

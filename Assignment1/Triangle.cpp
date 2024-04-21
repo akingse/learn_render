@@ -1,8 +1,4 @@
-#include "Triangle.hpp"
-#include <algorithm>
-#include <array>
-#include "Texture.hpp"
-
+#include"pch.h"
 
 //Triangle::Triangle()
 //{

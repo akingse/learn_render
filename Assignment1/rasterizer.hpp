@@ -2,15 +2,6 @@
 // Created by goksu on 4/6/19.
 //
 #pragma once
-#include "Triangle.hpp"
-#include "Shader.hpp"
-#include <map>
-#include <set>
-#include <vector>
-#include <optional>
-#include <algorithm>
-#include <Eigen/Dense> 
-using namespace Eigen;
 
 namespace rst //rasterizer 光栅器
 {
@@ -22,7 +13,7 @@ namespace rst //rasterizer 光栅器
 		std::vector<Eigen::Vector3f> m_vbo;
 		std::vector<Eigen::Vector3i> m_ibo; //std::array<int, 3>
 		std::vector<Eigen::Vector3f> m_col;
-		Matrix4f m_mat = Matrix4f::Identity();
+		Eigen::Matrix4f m_mat = Eigen::Matrix4f::Identity();
 		std::vector<Eigen::Vector3f> vbo() const
 		{
 			std::vector<Eigen::Vector3f> vbo;
@@ -68,6 +59,8 @@ namespace rst //rasterizer 光栅器
 		Shadering = 2,
 		Shader_SSAA = 3,
 	};
+
+	static const Eigen::Vector3f colorWhite{ 255, 255, 255 };
 
 	//rasterizer 光栅(Raster)由像素构成的一个矩形网格。
 	class Rasterizer
@@ -118,16 +111,16 @@ namespace rst //rasterizer 光栅器
 		std::map<int, std::vector<Eigen::Vector3i>> ind_buf; //ibo
 		std::map<int, std::vector<Eigen::Vector3f>> nor_buf; //nbo
 		std::map<int, std::vector<Eigen::Vector3f>> col_buf; //color
-		std::optional<Texture> texture; //C++17
+		std::optional<Texture> texture; //C++17, to avoid empty
 		std::function<Eigen::Vector3f(fragment_shader_payload)> fragment_shader;
 		std::function<Eigen::Vector3f(vertex_shader_payload)> vertex_shader;
 
 		// one dimension vector, size=width*height
 		int width, height;
 		float zNear, zFar;//for clip space
-		std::vector<Vector3f> frame_buf; //record color of pixel (0-255)
+		std::vector<Eigen::Vector3f> frame_buf; //record color of pixel (0-255)
 		std::vector<float> depth_buf; //record zbuffer of pixel
-		std::vector<std::array<Vector3f,4>> frame_buf_2xSSAA;//super-sampling Anti-aliasing
+		std::vector<std::array<Eigen::Vector3f,4>> frame_buf_2xSSAA;//super-sampling Anti-aliasing
 		std::vector<std::array<float,4>> depth_buf_2xSSAA;
 
 		int get_index(int x, int y) { return (height - 1 - y) * width + x; } //Rasterizer origin at left-down, opencv origin at left-up

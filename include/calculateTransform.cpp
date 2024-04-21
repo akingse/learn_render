@@ -1,9 +1,9 @@
-#include <Eigen/Dense> 
-#include "calculateTransform.h"
+#include"pch.h"
+
 using namespace std;
 //using namespace Eigen;
-using namespace eigen;
 
+#if 0
 struct Vec3f
 {
 	float x;
@@ -153,3 +153,4 @@ void set_screen_mat()
 		{0,0,.5f,.5f},
 		{0,0,0,1} });
 }
+#endif
