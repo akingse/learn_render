@@ -28,7 +28,6 @@
 //{
 //	tex_coords[ind] = Vector2f(s, t);
 //}
-
 //std::array<Vector4f, 3> Triangle::toVector4() const
 //{
 //	std::array<Vector4f, 3> res;
