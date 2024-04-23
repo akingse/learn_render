@@ -12,6 +12,7 @@ private:
     cv::Mat image_data; //opencv matrix
 
 public:
+    int width = 0, height = 0;
     Texture(const std::string& name) //read image uv-color using opencv
     {
         image_data = cv::imread(name);
@@ -20,9 +21,10 @@ public:
         height = image_data.rows;
     }
 
-    int width, height;
-    inline Eigen::Vector3f getColor(float u, float v) const
+    inline Eigen::Vector3f getColor(const Eigen::Vector2f& uv) const
     {
+        float u = uv[0];
+        float v = uv[1];
         int u_img = u * width;
         int v_img = (1 - v) * height;
         const cv::Vec3b& color = image_data.at<cv::Vec3b>(v_img, u_img);

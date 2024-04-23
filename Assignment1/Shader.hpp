@@ -36,12 +36,12 @@ struct light
     Eigen::Vector3f intensity;
 };
 
-inline Eigen::Vector3f vertex_shader(const vertex_shader_payload& payload)
-{
-    return payload.position;
-}
+//inline Eigen::Vector3f vertex_shader(const vertex_shader_payload& payload)
+//{
+//    return payload.position;
+//}
 
-inline Eigen::Vector3f reflect(const Eigen::Vector3f& vec, const Eigen::Vector3f& axis)
+inline Eigen::Vector3f reflect(const Eigen::Vector3f& vec, const Eigen::Vector3f& axis) // get input vec's mirror vector
 {
     float costheta = vec.dot(axis);
     return (2 * costheta * axis - vec).normalized();

@@ -1,8 +1,10 @@
 #pragma once
 namespace eigen//eigen
 {
-    typedef std::array<Eigen::Vector2f, 3> Trangle2d;
-    typedef std::array<Eigen::Vector3f, 3> Trangle3d;
+    typedef std::array<Eigen::Vector2f, 3> Trangle2f;
+    typedef std::array<Eigen::Vector3f, 3> Trangle3f;
+    typedef std::array<Eigen::Vector2f, 2> Segment2f;
+    typedef std::array<Eigen::Vector3f, 2> Segment3f;
 
     inline Eigen::Vector4f to_vec4(const Eigen::Vector3f& v3, float w = 1.0f)
     {

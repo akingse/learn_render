@@ -28,7 +28,7 @@ namespace rst //rasterizer ¹âÕ¤Æ÷
 			col_buf.emplace(0, mesh.m_col);
 		}
 
-
+		//set mvp matrix
 		void set_model(const Eigen::Matrix4f& m) {	model = m; }
 		void set_view(const Eigen::Matrix4f& v) { view = v; }
 		void set_projection(const Eigen::Matrix4f& p) { projection = p; }
@@ -39,26 +39,29 @@ namespace rst //rasterizer ¹âÕ¤Æ÷
 		void set_fragment_shader(std::function<Eigen::Vector3f(fragment_shader_payload)> frag_shader) { fragment_shader = frag_shader; };
 
 		void set_pixel_color(const Eigen::Vector3f& point, const Eigen::Vector3f& color);//frame_buf
-		void draw(Mode mode);
-		void draw(std::vector<Triangle*>& TriangleList);
+		void draw(const Mode mode);
+		void draw(const std::vector<Triangle*>& TriangleList);
 		std::vector<Eigen::Vector3f>& frame_buffer() { return frame_buf; } //output to opencv
 
 	private:
 		void draw_line(Eigen::Vector3f begin, Eigen::Vector3f end); //draw_segment
+		void rasterize_wireframe(const Triangle& t); //wireframe of triangle
+		void rasterize_triangle(const Triangle& t); //fill triangle
+		void rasterize_triangle_ssaa(const Triangle& t); //ssaa anti-aliasing
 		void rasterize_triangle(const Triangle& t, const std::array<Eigen::Vector3f, 3>& view_pos);
-		void rasterize_wireframe(const Triangle& t);
-		void rasterize_triangle(const Triangle& t);
-		void rasterize_triangle_ssaa(const Triangle& t);
 
 	private:
 		Eigen::Matrix4f model;
 		Eigen::Matrix4f view;
 		Eigen::Matrix4f projection;
+		//suppot multi mesh
+		std::vector<Mesh> m_meshs;
 		std::map<int, std::vector<Eigen::Vector3f>> pos_buf; //vbo
 		std::map<int, std::vector<Eigen::Vector3i>> ind_buf; //ibo
 		std::map<int, std::vector<Eigen::Vector3f>> nor_buf; //nbo
 		std::map<int, std::vector<Eigen::Vector3f>> col_buf; //color
 		std::optional<Texture> texture; //C++17, to avoid empty
+		//two function pointer
 		std::function<Eigen::Vector3f(fragment_shader_payload)> fragment_shader;
 		std::function<Eigen::Vector3f(vertex_shader_payload)> vertex_shader;
 

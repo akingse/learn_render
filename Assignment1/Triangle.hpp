@@ -11,9 +11,12 @@ struct Mesh
 	Mesh() = default;
 	Mesh(const std::vector<Eigen::Vector3f>& vbo, const std::vector<Eigen::Vector3i>& ibo)
 		:m_vbo(vbo), m_ibo(ibo) {}
+	//face
 	std::vector<Eigen::Vector3i> m_ibo; //std::array<int, 3>
-	std::vector<Eigen::Vector3f> m_nbo; //normal vector of face
-	std::vector<Eigen::Vector3f> m_vbo; //vertex
+	std::vector<Eigen::Vector3f> m_nbo; //normal of face
+	//vertex
+	std::vector<Eigen::Vector3f> m_vbo; //
+	std::vector<Eigen::Vector3f> m_vno; //normal of vertex
 	std::vector<Eigen::Vector3f> m_col; //rgb color of vertex
 	std::vector<Eigen::Vector2f> m_tuv; //tex_coords uv of vertex
 	Eigen::Matrix4f m_mat = Eigen::Matrix4f::Identity();
@@ -116,6 +119,7 @@ inline std::vector<Triangle*> loadTriangles(const std::string& filename)
 			TriangleList.push_back(t);
 		}
 	}
+	return TriangleList;
 }
 
 inline void deleteTriangles(std::vector<Triangle*>& triangles)

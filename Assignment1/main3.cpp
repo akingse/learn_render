@@ -8,15 +8,12 @@ using namespace rst;
 using namespace eigen;
 using namespace Eigen;
 
-//int main(int argc, const char** argv) { return 0; }
-
+// argument count //argument  value
 int main(int argc, const char** argv)
 {
 	//read OBJ
 	std::string filename = "output.png";
 	std::string obj_path = "C:/Users/wangk/source/repos/learn_render/Assignment1/models/spot/"; //fix path
-	// Load .obj File
-	std::vector<Triangle*> TriangleList;// = loadTriangles(obj_path + "spot_triangulated_good.obj");
 
 	//Rasterizer
 	int sz_width = 700;
@@ -28,49 +25,48 @@ int main(int argc, const char** argv)
 	float angle = 140.0;
 	rst::Rasterizer r(sz_width, sz_height, zNear, zFar);
 	string texture_path = "hmap.jpg";
+	std::vector<Mesh> meshVct = loadMeshs(obj_path + "spot_triangulated_good.obj");
+	std::vector<Triangle*> TriangleList = loadTriangles(obj_path + "spot_triangulated_good.obj");
 	r.set_texture(Texture(obj_path + texture_path));
 
-	std::function<Eigen::Vector3f(fragment_shader_payload)> active_shader = phong_fragment_shader;
-
-	if (argc >= 2)
+	std::function<Eigen::Vector3f(fragment_shader_payload)> active_shader;// = phong_fragment_shader;
+	argv[2] = "normal";
+	if (argc == 3)
 	{
-		filename = std::string(argv[1]);
-		if (argc == 3 && std::string(argv[2]) == "texture")
+		if (std::string(argv[2]) == "texture")
 		{
 			std::cout << "Rasterizing using the texture shader\n";
 			active_shader = texture_fragment_shader;
 			texture_path = "spot_texture.png";
 			r.set_texture(Texture(obj_path + texture_path));
 		}
-		else if (argc == 3 && std::string(argv[2]) == "normal")
+		else if (std::string(argv[2]) == "normal")
 		{
 			std::cout << "Rasterizing using the normal shader\n";
 			active_shader = normal_fragment_shader;
 		}
-		else if (argc == 3 && std::string(argv[2]) == "phong")
+		else if (std::string(argv[2]) == "phong")
 		{
 			std::cout << "Rasterizing using the phong shader\n";
 			active_shader = phong_fragment_shader;
 		}
-		else if (argc == 3 && std::string(argv[2]) == "bump")
+		else if (std::string(argv[2]) == "bump")
 		{
 			std::cout << "Rasterizing using the bump shader\n";
 			active_shader = bump_fragment_shader;
 		}
-		else if (argc == 3 && std::string(argv[2]) == "displacement")
+		else if (std::string(argv[2]) == "displacement")
 		{
 			std::cout << "Rasterizing using the displacement shader\n";
 			active_shader = displacement_fragment_shader;
 		}
 	}
 
-
-	r.set_vertex_shader(vertex_shader);
+	//r.set_vertex_shader(vertex_shader);
 	r.set_fragment_shader(active_shader);
 
 	int key = 0;
 	int frame_count = 0;
-
 	while (key != 27)
 	{
 		r.clear();
@@ -87,9 +83,9 @@ int main(int argc, const char** argv)
 		//cv::imwrite(filename, image);
 		key = cv::waitKey(10);
 
-		if (key == 'a')
+		if (key == 'A')
 			angle -= 0.1;
-		else if (key == 'd')
+		else if (key == 'D')
 			angle += 0.1;
 	}
 	return 0;
