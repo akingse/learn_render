@@ -13,7 +13,7 @@ int main(int argc, const char** argv)
 {
 	//read OBJ
 	std::string filename = "output.png";
-	std::string obj_path = "C:/Users/wangk/source/repos/learn_render/Assignment1/models/spot/"; //fix path
+	std::string obj_path = "C:/Users/wangk/source/repos/learn_render/Assignment1/models/"; //fix path
 
 	//Rasterizer
 	int sz_width = 700;
@@ -21,23 +21,25 @@ int main(int argc, const char** argv)
 	float zNear = 0.1;
 	float zFar = 50;
 	float aspect_ratio = (float)sz_width / sz_height;
-	Eigen::Vector3f eye_pos = { 0,0,10 };
+	Eigen::Vector3f eye_pos = { 0,0,3 };
 	float angle = 140.0;
 	rst::Rasterizer r(sz_width, sz_height, zNear, zFar);
-	string texture_path = "hmap.jpg";
-	std::vector<Mesh> meshVct = loadMeshs(obj_path + "spot_triangulated_good.obj");
-	std::vector<Triangle*> TriangleList = loadTriangles(obj_path + "spot_triangulated_good.obj");
+	string texture_path = "spot/hmap.jpg";
+	//std::vector<Mesh> meshVct = loadMeshs(obj_path + "spot/spot_triangulated_good.obj");
+	std::vector<Triangle*> TriangleList = loadTriangles(obj_path + "spot/spot_triangulated_good.obj");
+	//std::vector<Triangle*> TriangleList = loadTriangles(obj_path + "bunny/bunny.obj");
+	r.load_mesh(TriangleList);
 	r.set_texture(Texture(obj_path + texture_path));
 
 	std::function<Eigen::Vector3f(fragment_shader_payload)> active_shader;// = phong_fragment_shader;
-	argv[2] = "normal";
+	argv[2] = "displacement";
 	if (argc == 3)
 	{
 		if (std::string(argv[2]) == "texture")
 		{
 			std::cout << "Rasterizing using the texture shader\n";
 			active_shader = texture_fragment_shader;
-			texture_path = "spot_texture.png";
+			texture_path = "spot/spot_texture.png";
 			r.set_texture(Texture(obj_path + texture_path));
 		}
 		else if (std::string(argv[2]) == "normal")
@@ -70,12 +72,12 @@ int main(int argc, const char** argv)
 	while (key != 27)
 	{
 		r.clear();
-		r.set_model(get_model_matrix(Vector3f(0, 0, 0), Vector3f(1, 0, 0), angle));
+		r.set_model(get_model_matrix(Vector3f(0, 0, 0), Vector3f(0, 1, 0), angle));
 		r.set_view(get_viewing_matrix(eye_pos, Vector3f(0, 0, -1), Vector3f(0, 1, 0)));
-		r.set_projection(get_projection_matrix(45 * M_PI / 180, aspect_ratio, zNear, zFar));
+		r.set_projection(get_projection_matrix(45* M_PI / 180, aspect_ratio, zNear, zFar));
 
 		//r.draw(pos_id, ind_id, col_id, rst::Primitive::Triangle);
-		r.draw(TriangleList);
+		r.draw(Mode::Texture);
 		cv::Mat image(700, 700, CV_32FC3, r.frame_buffer().data());
 		image.convertTo(image, CV_8UC3, 1.0f);
 		cv::cvtColor(image, image, cv::COLOR_RGB2BGR);
@@ -87,6 +89,10 @@ int main(int argc, const char** argv)
 			angle -= 0.1;
 		else if (key == 'D')
 			angle += 0.1;
+		else if (key == 'W') //up
+			eye_pos.z() += 1;
+		else if (key == 'S') //down
+			eye_pos.z() -= 1;
 	}
 	return 0;
 }

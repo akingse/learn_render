@@ -10,6 +10,7 @@ namespace rst //rasterizer ¹âÕ¤Æ÷
 		Wireframe = 1,
 		Shadering = 2,
 		Shader_SSAA = 3,
+		Texture = 4,
 	};
 
 	static const Eigen::Vector3f colorWhite{ 255, 255, 255 };
@@ -27,7 +28,10 @@ namespace rst //rasterizer ¹âÕ¤Æ÷
 			ind_buf.emplace(0, mesh.m_ibo);
 			col_buf.emplace(0, mesh.m_col);
 		}
-
+		void load_mesh(const std::vector<Triangle*>& mesh)
+		{
+			m_TriangleList = mesh;
+		}
 		//set mvp matrix
 		void set_model(const Eigen::Matrix4f& m) {	model = m; }
 		void set_view(const Eigen::Matrix4f& v) { view = v; }
@@ -37,10 +41,10 @@ namespace rst //rasterizer ¹âÕ¤Æ÷
 		void set_texture(Texture tex) { texture = tex; }
 		void set_vertex_shader(std::function<Eigen::Vector3f(vertex_shader_payload)> vert_shader) { vertex_shader = vert_shader; };
 		void set_fragment_shader(std::function<Eigen::Vector3f(fragment_shader_payload)> frag_shader) { fragment_shader = frag_shader; };
-
 		void set_pixel_color(const Eigen::Vector3f& point, const Eigen::Vector3f& color);//frame_buf
+		//interface
 		void draw(const Mode mode);
-		void draw(const std::vector<Triangle*>& TriangleList);
+		//void draw(const std::vector<Triangle*>& TriangleList);
 		std::vector<Eigen::Vector3f>& frame_buffer() { return frame_buf; } //output to opencv
 
 	private:
@@ -56,6 +60,7 @@ namespace rst //rasterizer ¹âÕ¤Æ÷
 		Eigen::Matrix4f projection;
 		//suppot multi mesh
 		std::vector<Mesh> m_meshs;
+		std::vector<Triangle*> m_TriangleList;
 		std::map<int, std::vector<Eigen::Vector3f>> pos_buf; //vbo
 		std::map<int, std::vector<Eigen::Vector3i>> ind_buf; //ibo
 		std::map<int, std::vector<Eigen::Vector3f>> nor_buf; //nbo

@@ -29,9 +29,21 @@ namespace eigen//eigen
         return v0[0] * v1[1] - v0[1] * v1[0];
     }
 
+    inline Eigen::Vector3f reflect(const Eigen::Vector3f& vec, const Eigen::Vector3f& axis) // get input vec's mirror vector
+    {
+        float costheta = vec.dot(axis);
+        return (2 * costheta * axis - vec).normalized();
+    }
+
+
     inline std::array<Eigen::Vector3f, 3> _toArray(const Eigen::Vector3f* v)
     {
         return std::array<Eigen::Vector3f, 3>{v[0], v[1], v[2]};
+    };
+
+    inline std::array<Eigen::Vector2f, 3> _toArray(const Eigen::Vector2f* v)
+    {
+        return std::array<Eigen::Vector2f, 3>{v[0], v[1], v[2]};
     };
 
     inline std::array<Eigen::Vector3f, 3> operator*(const Eigen::Matrix4f& mat, const std::array<Eigen::Vector3f, 3>& trigon)
@@ -202,6 +214,15 @@ namespace eigen//eigen
         if (std::isnan(c3))
             c3 = v[0].z();
         return Eigen::Vector3f(c1, c2, c3);
+    }
+
+    inline Eigen::Vector3f computeBarycentric(const Eigen::Vector3f& abc, const std::array<Eigen::Vector3f, 3>& trigon)
+    {
+        return abc[0] * trigon[0] + abc[1] * trigon[1] + abc[2] * trigon[2];
+    }
+    inline Eigen::Vector2f computeBarycentric(const Eigen::Vector3f& abc, const std::array<Eigen::Vector2f, 3>& trigon)
+    {
+        return abc[0] * trigon[0] + abc[1] * trigon[1] + abc[2] * trigon[2];
     }
 
     inline Eigen::Vector3f getBarycentricInterpolate(const std::array<Eigen::Vector3f, 3>& trigon, Eigen::Vector2f bc)//->Eigen::Vector3f

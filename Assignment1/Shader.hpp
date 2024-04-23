@@ -8,19 +8,15 @@
 
 struct fragment_shader_payload
 {
-    fragment_shader_payload()
-    {
-        texture = nullptr;
-    }
-
-    fragment_shader_payload(const Eigen::Vector3f& col, const Eigen::Vector3f& nor,const Eigen::Vector2f& tc, Texture* tex) :
-         color(col), normal(nor), tex_coords(tc), texture(tex) {}
-
+    fragment_shader_payload() = default;
+    fragment_shader_payload(const Eigen::Vector3f& vp, const Eigen::Vector3f& col, const Eigen::Vector3f& nor,const Eigen::Vector2f& tc, Texture* tex) :
+        view_pos(vp), color(col), normal(nor), tex_coords(tc), texture(tex) {}
+    //public:
     Eigen::Vector3f view_pos;
     Eigen::Vector3f color;
     Eigen::Vector3f normal;
     Eigen::Vector2f tex_coords;
-    Texture* texture;
+    Texture* texture = nullptr;
 };
 
 struct vertex_shader_payload
@@ -40,12 +36,6 @@ struct light
 //{
 //    return payload.position;
 //}
-
-inline Eigen::Vector3f reflect(const Eigen::Vector3f& vec, const Eigen::Vector3f& axis) // get input vec's mirror vector
-{
-    float costheta = vec.dot(axis);
-    return (2 * costheta * axis - vec).normalized();
-}
 
 // shader
 inline Eigen::Vector3f normal_fragment_shader(const fragment_shader_payload& payload)
