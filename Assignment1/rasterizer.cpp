@@ -138,9 +138,12 @@ void rst::Rasterizer::rasterize_wireframe(const Triangle& t)
 
 void rst::Rasterizer::draw(const Mode mode)
 {
-	const vector<Eigen::Vector3f>& vbo = pos_buf[0];
-	const vector<Eigen::Vector3i>& ibo = ind_buf[0];
-	const vector<Eigen::Vector3f>& col = col_buf[0];
+	int ind = 0;
+	if (m_meshs.empty())
+		return;
+	const vector<Eigen::Vector3f>& vbo = m_meshs[ind].m_vbo;
+	const vector<Eigen::Vector3i>& ibo = m_meshs[ind].m_ibo;
+	const vector<Eigen::Vector3f>& col = m_meshs[ind].m_col;
 	float f1 = (zFar - zNear) / 2.0;
 	float f2 = (zFar + zNear) / 2.0;
 	Eigen::Matrix4f mvp = projection * view * model;
@@ -178,8 +181,8 @@ void rst::Rasterizer::draw(const Mode mode)
 		{
 			Triangle newtri = *t;
 			//std::array<Eigen::Vector4f, 3> mm = to_vec4(view * model * _toArray(t->vertex));
-			std::array<Eigen::Vector3f, 3> viewspace_pos = view * model * _toArray(t->vertex); //before persp
-			std::array<Eigen::Vector3f, 3> v = mvp * _toArray(t->vertex);
+			std::array<Eigen::Vector3f, 3> viewspace_pos = view * model * t->vertex; //before persp
+			std::array<Eigen::Vector3f, 3> v = mvp * t->vertex;
 			Eigen::Matrix4f inv_trans = (view * model).inverse().transpose();
 			Eigen::Vector4f n[] = {
 					inv_trans * to_vec4(t->normal[0], 0.0f),
@@ -230,7 +233,7 @@ void Rasterizer::rasterize_triangle(const Triangle& t)
 				continue;
 			float x = i + 0.5f; //center of pixel
 			float y = j + 0.5f;
-			if (!insideTriangle(x, y, _toArray(t.vertex)))
+			if (!insideTriangle(x, y, t.vertex))
 				continue;
 			//[alpha, beta, gamma]
 			//Vector3f abg = computeBarycentric2D(x, y, _toArray(t.vertex));
@@ -238,8 +241,8 @@ void Rasterizer::rasterize_triangle(const Triangle& t)
 			//float w_reciprocal = 1.0 / (abg[0] / v[0].w() + abg[1] / v[1].w() + abg[2] / v[2].w());
 			//float z_interpolated = abg[0] * v[0].z() / v[0].w() + abg[1] * v[1].z() / v[1].w() + abg[2] * v[2].z() / v[2].w();
 			//z_interpolated *= w_reciprocal;
-			Eigen::Vector3f point = getBarycentricCoordinate(_toArray(t.vertex), Eigen::Vector2f(x, y));
-			Eigen::Vector3f color = getBarycentricInterpolate(t.getColor(), getBarycentricCoordinate(to_vec2(_toArray(t.vertex)), Eigen::Vector2f(x, y)));
+			Eigen::Vector3f point = getBarycentricCoordinate(t.vertex, Eigen::Vector2f(x, y));
+			Eigen::Vector3f color = getBarycentricInterpolate(t.getColor(), getBarycentricCoordinate(to_vec2(t.vertex), Eigen::Vector2f(x, y)));
 			//Vector3f color = _getColorInterp(t.getColor(), bc);
 			int id = get_index(i, j);
 			if (depth_buf.size() <= id || id < 0)
@@ -276,9 +279,9 @@ void Rasterizer::rasterize_triangle_ssaa(const Triangle& t)
 				{
 					float cx = x + i + 0.5; //pixel center
 					float cy = y + j + 0.5;
-					if (!insideTriangle(cx, cy, _toArray(t.vertex)))
+					if (!insideTriangle(cx, cy, t.vertex))
 						continue;
-					Eigen::Vector3f point = getBarycentricCoordinate(_toArray(t.vertex), Eigen::Vector2f(cx, cy));
+					Eigen::Vector3f point = getBarycentricCoordinate(t.vertex, Eigen::Vector2f(cx, cy));
 					if (point.z() < depth_buf_2xSSAA[id][index]) //down sampling
 					{
 						frame_buf_2xSSAA[id][index] = t.getColor()[0];
@@ -321,13 +324,13 @@ void rst::Rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eig
 		for (int y = floor(box.min()[1]); y < ceil(box.max()[1]); y++)
 		{
 			Eigen::Vector3f point(x, y, 1); //the pixel
-			if (!insideTriangle(x + 0.5f, y + 0.5f, _toArray(t.vertex)))
+			if (!insideTriangle(x + 0.5f, y + 0.5f, t.vertex))
 				continue;
-			Vector3f abg = computeBarycentric2D(x + 0.5, y + 0.5, _toArray(t.vertex));
+			Vector3f abg = computeBarycentric2D(x + 0.5, y + 0.5, t.vertex);
 			float z_interpolated = abg[0] * t.vertex[0].z() + abg[1] * t.vertex[1].z() + abg[2] * t.vertex[2].z();
-			Vector3f color_interpolated = computeBarycentric(abg, _toArray(t.color));
-			Vector3f normal_interpolated = computeBarycentric(abg, _toArray(t.normal));
-			Vector2f textureCoord_interpolated = computeBarycentric(abg, _toArray(t.tex_coords));
+			Vector3f color_interpolated = computeBarycentric(abg, t.color);
+			Vector3f normal_interpolated = computeBarycentric(abg, t.normal);
+			Vector2f textureCoord_interpolated = computeBarycentric(abg, t.tex_coords);
 			Vector3f shadingcoords_interpolated = computeBarycentric(abg, view_pos);
 			int id = get_index(x, y); //pixel index
 			if (depth_buf.size() <= id || id < 0)
@@ -339,7 +342,7 @@ void rst::Rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eig
 				color_interpolated, 
 				normal_interpolated.normalized(), 
 				textureCoord_interpolated, 
-				texture ? &texture.value() : nullptr);
+				texture.get());
 			if (fragment_shader == nullptr)
 				continue;
 			Vector3f pixel_color = fragment_shader(payload);

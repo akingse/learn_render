@@ -24,9 +24,10 @@ namespace rst //rasterizer ¹âÕ¤Æ÷
 
 		void load_mesh(const Mesh& mesh)
 		{
-			pos_buf.emplace(0, mesh.vbo());
-			ind_buf.emplace(0, mesh.m_ibo);
-			col_buf.emplace(0, mesh.m_col);
+			//pos_buf.emplace(0, mesh.vbo());
+			//ind_buf.emplace(0, mesh.m_ibo);
+			//col_buf.emplace(0, mesh.m_col);
+			m_meshs.push_back(mesh);
 		}
 		void load_mesh(const std::vector<Triangle*>& mesh)
 		{
@@ -38,8 +39,8 @@ namespace rst //rasterizer ¹âÕ¤Æ÷
 		void set_projection(const Eigen::Matrix4f& p) { projection = p; }
 		void set_clip_space(float n, float f) { zNear = n; zFar = f; }//l r b t
 		//texture
-		void set_texture(Texture tex) { texture = tex; }
-		void set_vertex_shader(std::function<Eigen::Vector3f(vertex_shader_payload)> vert_shader) { vertex_shader = vert_shader; };
+		void set_texture(Texture* tex) { texture = std::make_shared<Texture>(*tex); }
+		//void set_vertex_shader(std::function<Eigen::Vector3f(vertex_shader_payload)> vert_shader) { vertex_shader = vert_shader; };
 		void set_fragment_shader(std::function<Eigen::Vector3f(fragment_shader_payload)> frag_shader) { fragment_shader = frag_shader; };
 		void set_pixel_color(const Eigen::Vector3f& point, const Eigen::Vector3f& color);//frame_buf
 		//interface
@@ -61,14 +62,15 @@ namespace rst //rasterizer ¹âÕ¤Æ÷
 		//suppot multi mesh
 		std::vector<Mesh> m_meshs;
 		std::vector<Triangle*> m_TriangleList;
-		std::map<int, std::vector<Eigen::Vector3f>> pos_buf; //vbo
-		std::map<int, std::vector<Eigen::Vector3i>> ind_buf; //ibo
-		std::map<int, std::vector<Eigen::Vector3f>> nor_buf; //nbo
-		std::map<int, std::vector<Eigen::Vector3f>> col_buf; //color
-		std::optional<Texture> texture; //C++17, to avoid empty
-		//two function pointer
+		//std::map<int, std::vector<Eigen::Vector3f>> pos_buf; //vbo
+		//std::map<int, std::vector<Eigen::Vector3i>> ind_buf; //ibo
+		//std::map<int, std::vector<Eigen::Vector3f>> nor_buf; //nbo
+		//std::map<int, std::vector<Eigen::Vector3f>> col_buf; //color
+		//std::optional<Texture> texture; //C++17, to avoid empty
+		//function pointer
+		std::shared_ptr<Texture> texture;
 		std::function<Eigen::Vector3f(fragment_shader_payload)> fragment_shader;
-		std::function<Eigen::Vector3f(vertex_shader_payload)> vertex_shader;
+		//std::function<Eigen::Vector3f(vertex_shader_payload)> vertex_shader;
 
 		// one dimension vector, size=width*height
 		int width, height;

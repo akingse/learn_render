@@ -19,10 +19,10 @@ struct fragment_shader_payload
     Texture* texture = nullptr;
 };
 
-struct vertex_shader_payload
-{
-    Eigen::Vector3f position;
-};
+//struct vertex_shader_payload
+//{
+//    Eigen::Vector3f position;
+//};
 
 #endif //RASTERIZER_SHADER_H
 

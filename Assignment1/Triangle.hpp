@@ -19,6 +19,7 @@ struct Mesh
 	std::vector<Eigen::Vector3f> m_vno; //normal of vertex
 	std::vector<Eigen::Vector3f> m_col; //rgb color of vertex
 	std::vector<Eigen::Vector2f> m_tuv; //tex_coords uv of vertex
+	std::shared_ptr<Texture> tex = nullptr;
 	Eigen::Matrix4f m_mat = Eigen::Matrix4f::Identity();
 	std::vector<Eigen::Vector3f> vbo() const
 	{
@@ -46,17 +47,16 @@ struct Mesh
 class Triangle
 {
 public:
-	//std::array<Vector3f, 3> m_vertex;
-	Eigen::Vector3f vertex[3]; /*the original coordinates of the triangle, v0, v1, v2 in counter clockwise order*/
-	Eigen::Vector3f normal[3];     // normal vector for each vertex
-	Eigen::Vector3f color[3];      // color at each vertex;
-	Eigen::Vector2f tex_coords[3]; // texture u,v
+	std::array<Eigen::Vector3f, 3> vertex; /*the original coordinates of the triangle, v0, v1, v2 in counter clockwise order*/
+	std::array<Eigen::Vector3f, 3> normal;     // normal vector for each vertex
+	std::array<Eigen::Vector3f, 3> color;      // color at each vertex;
+	std::array<Eigen::Vector2f, 3> tex_coords; // texture u,v
 	Texture* tex = nullptr;
 
 public:
 	Triangle()
 	{
-		memset(this, 0, 3 * (3 + 3 + 2 + 3) * sizeof(float));
+		memset(this, 0, 3 * (3 + 3 + 2 + 3) * sizeof(float) + sizeof(void*));
 	}
 	void setVertex(int ind, const Eigen::Vector3f& ver)
 	{
