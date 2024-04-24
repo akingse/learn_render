@@ -9,8 +9,11 @@
 #include <math.h>
 #include <iostream>
 #include <stdexcept>
-#include <Eigen/Dense> 
-#include <opencv2/opencv.hpp>
+// D:\Alluser\akingse\TPL\vcpkg\packages\eigen3_x64-windows\include\Eigen
+#include <Eigen/Dense> // .\vcpkg.exe install eigen3:x64-windows
+// D:\Alluser\akingse\TPL\vcpkg\packages\opencv4_x64-windows\include\opencv2
+// D:\Alluser\akingse\TPL\vcpkg\packages\opencv4_x64-windows\lib
+#include <opencv2/opencv.hpp> // \.vcpkg.exe install opencv:x64-windows
 #include "OBJ_Loader.h"
 
 #include "calculateTransform.h" //eigen calculate
