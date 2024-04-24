@@ -16,6 +16,8 @@ public:
     Texture(const std::string& name) //read image uv-color using opencv
     {
         image_data = cv::imread(name);
+        if (image_data.empty())
+            return;
         cv::cvtColor(image_data, image_data, cv::COLOR_RGB2BGR);
         width = image_data.cols;
         height = image_data.rows;
@@ -23,6 +25,8 @@ public:
 
     inline Eigen::Vector3f getColor(const Eigen::Vector2f& uv) const
     {
+        if (image_data.empty())
+			return Eigen::Vector3f(0, 0, 0);
         float u = uv[0];
         float v = uv[1];
         int u_img = u * width;

@@ -139,40 +139,41 @@ void rst::Rasterizer::rasterize_wireframe(const Triangle& t)
 void rst::Rasterizer::draw(const Mode mode)
 {
 	int ind = 0;
-	if (m_meshs.empty())
-		return;
-	const vector<Eigen::Vector3f>& vbo = m_meshs[ind].m_vbo;
-	const vector<Eigen::Vector3i>& ibo = m_meshs[ind].m_ibo;
-	const vector<Eigen::Vector3f>& col = m_meshs[ind].m_col;
 	float f1 = (zFar - zNear) / 2.0;
 	float f2 = (zFar + zNear) / 2.0;
 	Eigen::Matrix4f mvp = projection * view * model;
-	for (const auto& face : ibo)
+	if (!m_meshs.empty())
 	{
-		array<Eigen::Vector3f, 3> trigon = array<Eigen::Vector3f, 3>{ vbo[face[0]], vbo[face[1]], vbo[face[2]] };
-		trigon = mvp * trigon;
-		for (auto& vert : trigon)
+		const vector<Eigen::Vector3f>& vbo = m_meshs[ind].m_vbo;
+		const vector<Eigen::Vector3i>& ibo = m_meshs[ind].m_ibo;
+		const vector<Eigen::Vector3f>& col = m_meshs[ind].m_col;
+		for (const auto& face : ibo)
 		{
-			vert.x() = 0.5 * width * (vert.x() + 1.0f); //move canonical cube to origin
-			vert.y() = 0.5 * height * (vert.y() + 1.0f);
-			vert.z() = vert.z() * f2 + f1;// vert.z()* f1 + f2;
-		}
-		Triangle t;
-		for (int i = 0; i < 3; ++i)
-		{
-			t.setVertex(i, trigon[i]);
-			if (!col.empty())
-				t.setColor(i, col[face[i]]);
-			else
-				t.setColor(i, colorWhite);
-		}
+			array<Eigen::Vector3f, 3> trigon = array<Eigen::Vector3f, 3>{ vbo[face[0]], vbo[face[1]], vbo[face[2]] };
+			trigon = mvp * trigon;
+			for (auto& vert : trigon)
+			{
+				vert.x() = 0.5 * width * (vert.x() + 1.0f); //move canonical cube to origin
+				vert.y() = 0.5 * height * (vert.y() + 1.0f);
+				vert.z() = vert.z() * f2 + f1;// vert.z()* f1 + f2;
+			}
+			Triangle t;
+			for (int i = 0; i < 3; ++i)
+			{
+				t.setVertex(i, trigon[i]);
+				if (!col.empty())
+					t.setColor(i, col[face[i]]);
+				else
+					t.setColor(i, colorWhite);
+			}
 
-		if (Mode::Wireframe == mode)
-			rasterize_wireframe(t);
-		else if (Mode::Shadering == mode)
-			rasterize_triangle(t);
-		else if (Mode::Shader_SSAA == mode)
-			rasterize_triangle_ssaa(t);
+			if (Mode::Wireframe == mode)
+				rasterize_wireframe(t);
+			else if (Mode::Shadering == mode)
+				rasterize_triangle(t);
+			else if (Mode::Shader_SSAA == mode)
+				rasterize_triangle_ssaa(t);
+		}
 	}
 	//shader
 	if (Mode::Texture == mode)

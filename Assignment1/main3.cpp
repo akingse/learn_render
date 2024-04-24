@@ -32,7 +32,7 @@ int main(int argc, const char** argv)
 	r.set_texture(new Texture(obj_path + texture_path));
 
 	std::function<Eigen::Vector3f(fragment_shader_payload)> active_shader;// = phong_fragment_shader;
-	argv[2] = "displacement";
+	argv[2] = "texture";
 	if (argc == 3)
 	{
 		if (std::string(argv[2]) == "texture")
