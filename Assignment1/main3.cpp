@@ -24,53 +24,53 @@ int main(int argc, const char** argv)
 	Eigen::Vector3f eye_pos = { 0,0,3 };
 	float angle = 140.0;
 	rst::Rasterizer r(sz_width, sz_height, zNear, zFar);
-	string texture_path = "spot/hmap.jpg";
+	//string texture_path = "spot/hmap.jpg";
+	string texture_path = "spot/spot_texture.png";
 	//std::vector<Mesh> meshVct = loadMeshs(obj_path + "spot/spot_triangulated_good.obj");
 	std::vector<Triangle*> TriangleList = loadTriangles(obj_path + "spot/spot_triangulated_good.obj");
 	//std::vector<Triangle*> TriangleList = loadTriangles(obj_path + "bunny/bunny.obj");
 	r.load_mesh(TriangleList);
-	r.set_texture(new Texture(obj_path + texture_path));
+	r.load_texture(new Texture(obj_path + texture_path));
+	std::function<Eigen::Vector3f(fragment_shader_payload)> active_shader = texture_fragment_shader;
 
-	std::function<Eigen::Vector3f(fragment_shader_payload)> active_shader;// = phong_fragment_shader;
-	argv[2] = "texture";
-	if (argc == 3)
-	{
-		if (std::string(argv[2]) == "texture")
-		{
-			std::cout << "Rasterizing using the texture shader\n";
-			active_shader = texture_fragment_shader;
-			texture_path = "spot/spot_texture.png";
-			r.set_texture(new Texture(obj_path + texture_path));
-		}
-		else if (std::string(argv[2]) == "normal")
-		{
-			std::cout << "Rasterizing using the normal shader\n";
-			active_shader = normal_fragment_shader;
-		}
-		else if (std::string(argv[2]) == "phong")
-		{
-			std::cout << "Rasterizing using the phong shader\n";
-			active_shader = phong_fragment_shader;
-		}
-		else if (std::string(argv[2]) == "bump")
-		{
-			std::cout << "Rasterizing using the bump shader\n";
-			active_shader = bump_fragment_shader;
-		}
-		else if (std::string(argv[2]) == "displacement")
-		{
-			std::cout << "Rasterizing using the displacement shader\n";
-			active_shader = displacement_fragment_shader;
-		}
-	}
+	//argv[2] = "texture";
+	//if (argc == 3)
+	//{
+	//	if (std::string(argv[2]) == "texture")
+	//	{
+	//		std::cout << "Rasterizing using the texture shader\n";
+	//		active_shader = texture_fragment_shader;
+	//		texture_path = "spot/spot_texture.png";
+	//		r.set_texture(new Texture(obj_path + texture_path));
+	//	}
+	//	else if (std::string(argv[2]) == "normal")
+	//	{
+	//		std::cout << "Rasterizing using the normal shader\n";
+	//		active_shader = normal_fragment_shader;
+	//	}
+	//	else if (std::string(argv[2]) == "phong")
+	//	{
+	//		std::cout << "Rasterizing using the phong shader\n";
+	//		active_shader = phong_fragment_shader;
+	//	}
+	//	else if (std::string(argv[2]) == "bump")
+	//	{
+	//		std::cout << "Rasterizing using the bump shader\n";
+	//		active_shader = bump_fragment_shader;
+	//	}
+	//	else if (std::string(argv[2]) == "displacement")
+	//	{
+	//		std::cout << "Rasterizing using the displacement shader\n";
+	//		active_shader = displacement_fragment_shader;
+	//	}
+	//}
 
-	//r.set_vertex_shader(vertex_shader);
-	r.set_fragment_shader(active_shader);
 
 	int key = 0;
 	int frame_count = 0;
 	while (key != 27)
 	{
+		r.set_fragment_shader(active_shader);
 		r.clear();
 		r.set_model(get_model_matrix(Vector3f(0, 0, 0), Vector3f(0, 1, 0), angle));
 		r.set_view(get_viewing_matrix(eye_pos, Vector3f(0, 0, -1), Vector3f(0, 1, 0)));
@@ -84,7 +84,6 @@ int main(int argc, const char** argv)
 		cv::imshow("image", image);
 		//cv::imwrite(filename, image);
 		key = cv::waitKey(10);
-
 		if (key == 'A')
 			angle -= 0.1;
 		else if (key == 'D')
@@ -93,6 +92,13 @@ int main(int argc, const char** argv)
 			eye_pos.z() += 1;
 		else if (key == 'S') //down
 			eye_pos.z() -= 1;
+		//switch
+		else if (key == '1')
+			active_shader = normal_fragment_shader;
+		else if (key == '2')
+			active_shader = texture_fragment_shader;
+		else if (key == '3')
+			active_shader = phong_fragment_shader;
 	}
 	return 0;
 }

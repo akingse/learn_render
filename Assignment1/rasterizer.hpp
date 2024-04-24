@@ -8,11 +8,12 @@ namespace rst //rasterizer 光栅器
 	enum class Mode
 	{
 		Wireframe = 1,
-		Shadering = 2,
+		Shadering = 2, // Hatch
 		Shader_SSAA = 3,
 		Texture = 4,
 	};
 
+	static const Eigen::Vector3f colorBlack{ 0, 0, 0 };
 	static const Eigen::Vector3f colorWhite{ 255, 255, 255 };
 
 	//rasterizer 光栅(Raster)由像素构成的一个矩形网格。
@@ -39,9 +40,9 @@ namespace rst //rasterizer 光栅器
 		void set_projection(const Eigen::Matrix4f& p) { projection = p; }
 		void set_clip_space(float n, float f) { zNear = n; zFar = f; }//l r b t
 		//texture
-		void set_texture(Texture* tex) { texture = std::make_shared<Texture>(*tex); }
+		void load_texture(Texture* tex) { texture = std::make_shared<Texture>(*tex); }
 		//void set_vertex_shader(std::function<Eigen::Vector3f(vertex_shader_payload)> vert_shader) { vertex_shader = vert_shader; };
-		void set_fragment_shader(std::function<Eigen::Vector3f(fragment_shader_payload)> frag_shader) { fragment_shader = frag_shader; };
+		void set_fragment_shader(std::function<Eigen::Vector3f(fragment_shader_payload)> frag_shader) { fragment_shader_function = frag_shader; };
 		void set_pixel_color(const Eigen::Vector3f& point, const Eigen::Vector3f& color);//frame_buf
 		//interface
 		void draw(const Mode mode);
@@ -69,21 +70,18 @@ namespace rst //rasterizer 光栅器
 		//std::optional<Texture> texture; //C++17, to avoid empty
 		//function pointer
 		std::shared_ptr<Texture> texture;
-		std::function<Eigen::Vector3f(fragment_shader_payload)> fragment_shader;
+		std::function<Eigen::Vector3f(fragment_shader_payload)> fragment_shader_function;
 		//std::function<Eigen::Vector3f(vertex_shader_payload)> vertex_shader;
 
 		// one dimension vector, size=width*height
-		int width, height;
+		int width, height; // origin at left-down, [0,0]-[width-1, height-1]
 		float zNear, zFar;//for clip space
 		std::vector<Eigen::Vector3f> frame_buf; //record color of pixel (0-255)
 		std::vector<float> depth_buf; //record zbuffer of pixel
 		std::vector<std::array<Eigen::Vector3f,4>> frame_buf_2xSSAA;//super-sampling Anti-aliasing
 		std::vector<std::array<float,4>> depth_buf_2xSSAA;
 
-		int get_index(int x, int y) { return (height - 1 - y) * width + x; } //Rasterizer origin at left-down, opencv origin at left-up
-		//int next_id = 0;
-		//int get_next_id() { return next_id++; }
-
+		inline int get_index(int x, int y) const { return (height - 1 - y) * width + x; } //Rasterizer origin at left-down, opencv origin at left-up
 
 	};
 } // namespace rst

@@ -2,6 +2,7 @@
 // Created by LEI XU on 4/27/19.
 // head-only
 #pragma once
+#include"pch.h"
 
 #ifndef RASTERIZER_TEXTURE_H
 #define RASTERIZER_TEXTURE_H

@@ -22,7 +22,7 @@ Eigen::Vector3f texture_fragment_shader(const fragment_shader_payload& payload)
     std::vector<light> lights = { l1, l2 };
     Eigen::Vector3f amb_light_intensity{ 10, 10, 10 };
     Eigen::Vector3f eye_pos{ 0, 0, 10 };
-    float p = 150;
+    float p = 250;
     Eigen::Vector3f color = texture_color;
     Eigen::Vector3f point = payload.view_pos;
     Eigen::Vector3f normal = payload.normal;
@@ -45,7 +45,7 @@ Eigen::Vector3f texture_fragment_shader(const fragment_shader_payload& payload)
 //linght = 环境光(Ambient)+漫反射(Diffuse)+高光反射(Specular)
 Eigen::Vector3f phong_fragment_shader(const fragment_shader_payload& payload)
 {
-    Eigen::Vector3f ka = Eigen::Vector3f(0.005, 0.005, 0.005);
+    Eigen::Vector3f ka = Eigen::Vector3f(0.005, 0.005, 0.005);//环境光系数
     Eigen::Vector3f kd = payload.color;
     Eigen::Vector3f ks = Eigen::Vector3f(0.7937, 0.7937, 0.7937);
     light l1 = light{ {20, 20, 20}, 2*Vector3f{500, 500, 500} };
@@ -179,6 +179,5 @@ Eigen::Vector3f bump_fragment_shader(const fragment_shader_payload& payload)
     normal = TBN * ln;
     Eigen::Vector3f result_color = { 0, 0, 0 };
     result_color = normal;
-    return result_color * 255.f;
     return result_color * 255.f;
 }

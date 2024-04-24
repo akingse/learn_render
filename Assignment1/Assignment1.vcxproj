@@ -161,8 +161,6 @@
     </ClCompile>
     <ClCompile Include="rasterizer.cpp" />
     <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\calculateTransform.h" />
@@ -174,6 +172,6 @@
     <ClInclude Include="Triangle.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets" >
+  <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
 </Project>

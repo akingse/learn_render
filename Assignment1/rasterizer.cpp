@@ -138,12 +138,12 @@ void rst::Rasterizer::rasterize_wireframe(const Triangle& t)
 
 void rst::Rasterizer::draw(const Mode mode)
 {
-	int ind = 0;
 	float f1 = (zFar - zNear) / 2.0;
 	float f2 = (zFar + zNear) / 2.0;
 	Eigen::Matrix4f mvp = projection * view * model;
 	if (!m_meshs.empty())
 	{
+		int ind = 0;
 		const vector<Eigen::Vector3f>& vbo = m_meshs[ind].m_vbo;
 		const vector<Eigen::Vector3i>& ibo = m_meshs[ind].m_ibo;
 		const vector<Eigen::Vector3f>& col = m_meshs[ind].m_col;
@@ -166,7 +166,6 @@ void rst::Rasterizer::draw(const Mode mode)
 				else
 					t.setColor(i, colorWhite);
 			}
-
 			if (Mode::Wireframe == mode)
 				rasterize_wireframe(t);
 			else if (Mode::Shadering == mode)
@@ -317,12 +316,18 @@ void Rasterizer::rasterize_triangle_ssaa(const Triangle& t)
 //Screen space rasterization
 void rst::Rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eigen::Vector3f, 3>& view_pos)
 {
+	if (fragment_shader_function == nullptr)
+		return;
 	AlignedBox3f box;
 	for (const auto& iter : t.vertex)
 		box.extend(iter);
-	for (int x = floor(box.min()[0]); x < ceil(box.max()[0]); x++)
+	int x_min = std::max(0, (int)floor(box.min()[0]));
+	int x_max = std::min(width, (int)ceil(box.max()[0]));
+	int y_min = std::max(0, (int)floor(box.min()[1]));
+	int y_max = std::min(height, (int)ceil(box.max()[1]));
+	for (int x = x_min; x < x_max; x++)
 	{
-		for (int y = floor(box.min()[1]); y < ceil(box.max()[1]); y++)
+		for (int y = y_min; y < y_max; y++)
 		{
 			Eigen::Vector3f point(x, y, 1); //the pixel
 			if (!insideTriangle(x + 0.5f, y + 0.5f, t.vertex))
@@ -344,9 +349,7 @@ void rst::Rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eig
 				normal_interpolated.normalized(), 
 				textureCoord_interpolated, 
 				texture.get());
-			if (fragment_shader == nullptr)
-				continue;
-			Vector3f pixel_color = fragment_shader(payload);
+			Vector3f pixel_color = fragment_shader_function(payload);
 			set_pixel_color(point, pixel_color);
 			depth_buf[get_index(x, y)] = z_interpolated;
 		}
