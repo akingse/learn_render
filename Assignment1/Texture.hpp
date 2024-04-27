@@ -41,7 +41,7 @@ public:
         if (v_img >= height) 
             v_img = height - 1;
         const cv::Vec3b& color = image_data.at<cv::Vec3b>(v_img, u_img);
-        return Eigen::Vector3f(color[0], color[1], color[2]);
+		return 1.0f / 255 * Eigen::Vector3f(color[0], color[1], color[2]);
     }
 
 };

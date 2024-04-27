@@ -78,10 +78,6 @@ public:
 		setColor(1, colors[1]);
 		setColor(2, colors[2]);
 	}
-	void setTexCoord(int ind, float s, float t)
-	{
-		tex_coords[ind] = Eigen::Vector2f(s, t);
-	}; /*set i-th vertex texture coordinate*/
 	void setTexCoord(int ind, Eigen::Vector2f uv) /*set i-th vertex texture coordinate*/
 	{
 		tex_coords[ind] = uv;
