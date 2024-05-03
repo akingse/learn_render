@@ -19,10 +19,10 @@ Eigen::Vector3f texture_fragment_shader(const fragment_shader_payload& payload)
         Eigen::Vector3f lightDir = (light.position - point).normalized();
         Eigen::Vector3f halfVector = ((lightDir + viewDir) / 2.0f).normalized();
         float r2 = (light.position - point).squaredNorm();
-        Vector3f ambient = ka.cwiseProduct(worldlight.amb_light_intensity); //each rgb multi product
-        Vector3f diffuse = kd.cwiseProduct(light.intensity / r2 * std::max(0.0f, normal.dot(lightDir)));
-        Vector3f specular = ks.cwiseProduct(light.intensity / r2 * std::pow(std::max(0.0f, normal.dot(halfVector)), worldlight.p));
-        result_color += ambient + diffuse + specular;
+        Vector3f L_ambient = ka.cwiseProduct(worldlight.amb_light_intensity); //each rgb multi product
+        Vector3f L_diffuse = kd.cwiseProduct(light.intensity / r2 * std::max(0.0f, normal.dot(lightDir)));
+        Vector3f L_specular = ks.cwiseProduct(light.intensity / r2 * std::pow(std::max(0.0f, normal.dot(halfVector)), worldlight.p));
+        result_color += L_ambient + L_diffuse + L_specular;
     }
     return result_color * 255.f;
 }
@@ -30,7 +30,7 @@ Eigen::Vector3f texture_fragment_shader(const fragment_shader_payload& payload)
 Eigen::Vector3f phong_fragment_shader(const fragment_shader_payload& payload)
 {
     const WorldLighting& worldlight = WorldLighting::getInstance();
-    Eigen::Vector3f kd = payload.color; // not using textrue
+    Eigen::Vector3f kd = payload.color; // not using Texture
     Eigen::Vector3f ka = worldlight.ka;
     Eigen::Vector3f ks = worldlight.ks;
     Eigen::Vector3f point = payload.shading_point;
@@ -42,10 +42,10 @@ Eigen::Vector3f phong_fragment_shader(const fragment_shader_payload& payload)
         Eigen::Vector3f lightDir = (light.position - point).normalized();
         Eigen::Vector3f halfVector = ((lightDir + viewDir) / 2.0f).normalized();
         float r2 = (light.position - point).squaredNorm();
-        Vector3f ambient = ka.cwiseProduct(worldlight.amb_light_intensity); //each rgb multi product
-        Vector3f diffuse = kd.cwiseProduct(light.intensity / r2 * std::max(0.0f, normal.dot(lightDir)));
-        Vector3f specular = ks.cwiseProduct(light.intensity / r2 * std::pow(std::max(0.0f, normal.dot(halfVector)), worldlight.p));
-        result_color += ambient + diffuse + specular;
+        Vector3f L_ambient = ka.cwiseProduct(worldlight.amb_light_intensity); //each rgb multi product
+        Vector3f L_diffuse = kd.cwiseProduct(light.intensity / r2 * std::max(0.0f, normal.dot(lightDir)));
+        Vector3f L_specular = ks.cwiseProduct(light.intensity / r2 * std::pow(std::max(0.0f, normal.dot(halfVector)), worldlight.p));
+        result_color += L_ambient + L_diffuse + L_specular;
     }
     return result_color * 255.f;
 }
