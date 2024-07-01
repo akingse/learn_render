@@ -73,9 +73,9 @@ int main(int argc, const char** argv)
 	while (key != 27)
 	{
 		r.clear();
-		r.set_model(get_model_matrix(Vector3f(0, 0, 0), Vector3f(1, 1, 0), angle));
-		r.set_view(get_viewing_matrix(eye_pos, Vector3f(0, 0, -1), Vector3f(0, 1, 0)));
-		r.set_projection(get_projection_matrix(45 * M_PI / 180, aspect_ratio, zNear, zFar));
+		r.set_model_matrix(get_model_matrix(Vector3f(0, 0, 0), Vector3f(1, 1, 0), angle));
+		r.set_view_matrix(get_viewing_matrix(eye_pos, Vector3f(0, 0, -1), Vector3f(0, 1, 0)));
+		r.set_projection_matrix(get_projection_matrix(45 * M_PI / 180, aspect_ratio, zNear, zFar));
 		//r.draw(Mode::Shadering);
 		r.draw(Mode::Shader_SSAA);
 

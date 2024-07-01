@@ -72,9 +72,9 @@ int main(/*int argc, const char** argv*/)
     while (key != 27)  //ESC
     {
         r.clear();
-		r.set_model(get_model_matrix(Vector3f(0, 0, 0), Vector3f(1, 1,0), angle));
-		r.set_view(get_viewing_matrix(eye_pos, Vector3f(0, 0, -1), Vector3f(0, 1, 0)));
-		r.set_projection(get_projection_matrix(30 * M_PI / 180, aspect_ratio, 0.1, 10)); //注意z轴方向，裁剪空间nf未生效；
+		r.set_model_matrix(get_model_matrix(Vector3f(0, 0, 0), Vector3f(1, 1,0), angle));
+		r.set_view_matrix(get_viewing_matrix(eye_pos, Vector3f(0, 0, -1), Vector3f(0, 1, 0)));
+		r.set_projection_matrix(get_projection_matrix(30 * M_PI / 180, aspect_ratio, 0.1, 10)); //注意z轴方向，裁剪空间nf未生效；
         //r.set_projection(get_projection_matrix(-1, 1, -1, 1, 1, 50));
         r.draw(Mode::Shadering);
         vector3List debug_show = vector3List(r.frame_buffer());

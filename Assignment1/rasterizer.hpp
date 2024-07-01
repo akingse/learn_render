@@ -35,9 +35,9 @@ namespace rst //rasterizer ¹âÕ¤Æ÷
 			m_TriangleList = mesh;
 		}
 		//set mvp matrix
-		void set_model(const Eigen::Matrix4f& m) {	model = m; }
-		void set_view(const Eigen::Matrix4f& v) { view = v; }
-		void set_projection(const Eigen::Matrix4f& p) { projection = p; }
+		void set_model_matrix(const Eigen::Matrix4f& m) {	model = m; }
+		void set_view_matrix(const Eigen::Matrix4f& v) { view = v; }
+		void set_projection_matrix(const Eigen::Matrix4f& p) { projection = p; }
 		void set_clip_space(float n, float f) { zNear = n; zFar = f; }//l r b t
 		//texture
 		void load_texture(Texture* tex) { texture = std::make_shared<Texture>(*tex); }
